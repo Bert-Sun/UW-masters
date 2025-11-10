@@ -1,0 +1,158 @@
+\documentclass[12pt]{article}
+
+\usepackage{preamble}
+
+% document specific
+
+\newcommand{\anote}[1]{\textcolor{red}{\small {\textbf{(Ashwin:} #1\textbf{) }}}}
+
+\title{
+\textbf{ABC }~\thanks{Any ack common to all authors
+}
+}
+
+\author{
+ABC XYZ~\thanks{affiliation details, address, email, etc.
+} \\
+Affiliation
+\and
+BCD WXY~\thanks{abc
+} \\
+U.\ Waterloo
+}
+
+\date{???}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+TO BE COMPLETED
+\end{abstract}
+
+\section{Introduction}
+\label{sec-introduction}
+
+\paragraph{Acknowledgements.}
+Personal acks, grants, etc.
+
+\section{Section 2}
+\label{sec-2}
+
+\subsection{Pure State Source}
+
+% TODO: Problem setup?
+\subsubsection{Problem Setup}
+% describe reduction to unitary case, norm calculation, etc
+
+Given an ensemble $\{p_x, \ket{\rho_x}\}$, consider the diagonalization
+\[\sum_x p_x\ketbra{\rho_x}{\rho_x} = \sum_x \beta_x \ketbra{\psi_x}{\psi_x}\]
+Where the collection $\{\psi_x\}_x$ is pairwise orthogonal.
+Without loss of generality we may assume that the above density matrix has full support,
+as by taking a projection onto its support we find a trivial compression of the ensemble into a lower dimension with zero error. 
+Setting $n \eqdef \dim(A)$, we may then index the above sum ranging from $\{1, ..., n\}$.
+
+Up to a unitary on the reference and up to the reindexing above, we may then write the purification of the ensemble as:
+\begin{equation}\label{eq:purif}
+    \ket{\rho}^{RA} \eqdef \sum_{i=1}^n \sqrt{\beta_i}\ket{\psi_i}^A \ket{i}^R
+\end{equation}
+Given a target space $A'$ with $\dim(A') < \dim(A)$, we wish to find the following maximization:
+
+% substack is a bit misaligned, can move upwards maybe
+\[\max_{
+    \substack{U^{AC_1 \to A'C_1'} \text{unitary} \\ V^{A'C_2 \to AC_2'} \text{unitary}}}
+    \norm{
+        \left(\bra{\rho}^{RA} \otimes \one^{C_1'C_2'}\right)
+        VU\ket{\rho^{RA}}\ket{\bar{0}}^{C_1C_2}
+    }_2^2
+\]
+\subsubsection{Upper Bounds}
+With respect to the purification in \cref{eq:purif},
+we first characterize the action of $U$ on the subspace spanned by 
+$\{\ket{\psi_x}^A\ket{\bar{0}}^{C_1}\}_x$.
+Notice that the action of $U$ elsewhere is lost in the maximization, 
+it suffices to retain that the image of an orthonormal set remains orthonormal.
+
+If $d \eqdef \dim(A')$, we may let $\{\ket{j}\}_{j=1}^d$ be an ONB for $A'$.
+We may then decompose each $U\ket{\psi_i}^A\ket{\bar{0}}^{C_1}$ as:
+\begin{equation}\label{eq:decomp}
+    U\ket{\psi_i}\ket{\bar{0}} = \sum_j \lambda_{ij}\ket{j}^{A'}\ket{\xi_{ij}}^{C_1'}
+\end{equation}
+Note that $\{\ket{\psi_x}\}_x$ is pairwise orthogonal, and $U$ is unitary.
+This will be neccessary later.
+
+Next, the analysis of action of $V$ similarly can be restricted to only on the span of
+$\{\ket{j}^{A'}\ket{\bar{0}}^{C_2}\}$
+which is once again orthonormal.
+Designate:
+\[V\ket{j}^{A'}\ket{\bar{0}}^{C_2} = \ket{\sigma_j}^{AC_2'}\]
+The combined action of $VU$ on $\ket{\rho}^{RA}\ket{\bar{0}}^{C_1C_2}$ then is as follows:
+\[VU\ket{\rho}^{RA}\ket{\bar{0}}^{C_1C_2}
+    = \sum_{i=1}^n \sqrt{\beta_i} \ket{i}^R
+        \left(\sum_{j=1}^d \lambda_{ij}\ket{\sigma_j}^{AC_2'}\ket{\xi_{ij}}^{C_1'}\right)
+\]
+Expanding out $\bra{\rho}^{RA}\otimes \one^{C_1'C_2'}$
+with respect to \cref{eq:purif} and contracting the inner product on $R$ first to simplify,
+we obtain the following norm calculation:
+\[\max \norm{\sum_{ij} \beta_i \lambda_{ij} 
+    \left(\bra{\psi_i}^A \otimes \one^{C_2'}\right)\ket{\sigma_j}^{AC_2'}
+    \ket{\xi_{ij}}^{C_1'}}_2^2
+\]
+We simplify this maximization by dropping the square due to monotonicity of squaring,
+and apply Cauchy-Schwarz to upper bound the above norm (without the square) by:
+\[\sum_i \beta_i \norm{
+    \left(\bra{\psi_i}^A \otimes \one^{C_2'}\right)
+    \left(\sum_j \lambda_{ij}\ket{\sigma_j}\ket{\xi_{ij}}\right)}_2\]
+Due to the orthonormal conditions imposed on $\ket{\sigma_j}$ and $\lambda_{ij}, \ket{\xi_{ij}}$,
+we in fact have that
+\begin{equation}\label{eq:def_varphi}
+    \ket{\varphi_i} \eqdef \sum_j \lambda_{ij}\ket{\sigma_j}^{AC_1'}\ket{\xi_{ij}^{C_2'}}
+\end{equation}
+Is indeed a unit vector.
+Letting
+\[\alpha_i \eqdef \norm{
+    \left(\bra{\psi_i}^A \otimes \one^{C_2'}\right)
+    \ket{\varphi_i}}_2\]
+And applying tracial properties, we may calculate that:
+\begin{align*}
+    \alpha_i^2 &= \trace\left((\ketbra{\psi_i}{\psi_i}^A\otimes \one^{C_1'C_2'})\ketbra{\varphi_i}{\varphi_i}\right)\\
+    &= \trace\left((\ketbra{\psi_i}{\psi_i}^A \otimes \one^{C_1'})\trace_{C_2'}\ketbra{\varphi_i}{\varphi_i}\right)
+\end{align*}
+But it clear from \cref{eq:def_varphi} that for every $i$ we have that
+$\trace_{C_2'}\ketbra{\varphi_i}{\varphi_i}$
+has both support and range contained in the span of
+$\{\ket{\sigma_j}\}$.
+Letting $P$ denote the projection onto this span
+(and noting that by orthogonality that $P$ is of rank $d$ exactly)
+we have that
+$\trace_{C_2'}\ketbra{\varphi_i}{\varphi_i} \preceq P$
+since the left cannot have eigenvalues larger than 1.
+
+It follows that we may write:
+\begin{align}
+    \sum_i \alpha_i^2 
+        &\le \sum_i \trace\left(
+            \ketbra{\psi_i}{\psi_i}^A\otimes \one^{C_1'}
+            P \right) \\
+    & = \trace(\one^{AC_1'}P) = d
+\end{align}
+Where the second last equality follows from $\psi_i$ being a basis for $A$ by assumption.
+
+We have then reduced the above maximization problem to the following:
+\begin{equation*}
+\begin{array}{rl}
+    \text{maximize}    & \sum_i \beta_i \alpha_i \\
+    \text{subject to:} & \sum_i \alpha_i^2 \le d
+\end{array}
+\end{equation*}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+% \appendix
+
+% \include{appendix}
+
+\end{document}
+

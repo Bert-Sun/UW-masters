@@ -1,0 +1,154 @@
+%\usepackage{authblk,fullpage,times}
+\usepackage{fullpage,times}
+
+\usepackage[margin=1in]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+%\usepackage{bbold}
+\usepackage{mathtools}
+\usepackage{scrextend}    
+\usepackage{array}     
+\usepackage{multicol}    
+\usepackage{mathrsfs}    
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{upgreek}
+%\usepackage{IEEEtrantools}
+\usepackage{mleftright}
+\usepackage[mathscr]{euscript}
+\usepackage{thm-restate}
+\usepackage{relsize}
+\usepackage{float}
+\usepackage{endnotes}
+\usepackage{stmaryrd}
+\usepackage{dsfont}
+\usepackage{url}
+\usepackage{qcircuit}
+
+\definecolor{DarkBlue}{rgb}{0,0,0.8}  % For better printing.
+\definecolor{DarkOrange}{rgb}{0.8,0.4,0}  % For better printing.
+\def\mylinkcolor{DarkBlue}
+\def\mysubcolor{DarkOrange}
+%\def\mysubcolor{orange}
+
+
+\hypersetup{%pagebackref, 
+	colorlinks=true, urlcolor=\mylinkcolor,
+  linkcolor=\mylinkcolor, citecolor=\mylinkcolor}
+
+\allowdisplaybreaks
+
+% Theorem environment definitions
+\newtheorem{theorem}{Theorem}[section]    % Specify Theorem
+\newtheorem{definition}{Definition}[section] % Specify Definition
+\newtheorem{conjecture}[theorem]{Conjecture}   % Specify Conjecture
+\newtheorem{claim}[theorem]{Claim}    % Specify Claim
+\newtheorem{corollary}[theorem]{Corollary}    % Specify Corollary
+\newtheorem{proposition}[theorem]{Proposition}    % Specify Proposition
+\newtheorem{lemma}[theorem]{Lemma}    % Specify Lemma
+\newtheorem{fact}[theorem]{Fact}
+\renewcommand{\qed}{\hfill{$\rule{6pt}{6pt}$}} %Box at end of proof
+\renewenvironment{proof}{\noindent{\bf Proof:}}{\qed\\}
+\newenvironment{proofof}[1]{\noindent{\bf Proof of #1:}}{\qed\\}
+\newenvironment{remark}{\noindent{\bf Remark:}}%{\qed\\}
+
+% equation numbering
+\numberwithin{equation}{section}
+
+% sets
+\newcommand{\complex}{{\mathbb C}}
+\newcommand{\reals}{{\mathbb R}}
+\newcommand{\rationals}{{\mathbb Q}}
+\newcommand{\integers}{{\mathbb Z}}
+\newcommand{\naturals}{{\mathbb N}}
+
+% Math notation
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\trnorm}[1]{\left\| #1 \right\|_{\mathrm{tr}}}
+\newcommand{\size}[1]{\left| #1 \right|}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\floor}[1]{{\lfloor #1 \rfloor}}
+\newcommand{\ceil}[1]{{\lceil #1 \rceil}}
+\newcommand{\abs}[1]{\left| #1 \right|}
+
+\DeclareMathOperator{\fidelity}{F}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\trace}{Tr}
+\DeclareMathOperator{\support}{supp}
+\DeclareMathOperator{\Order}{O}
+\DeclareMathOperator{\tOrder}{\widetilde{O}}
+\DeclareMathOperator{\order}{o}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\expct}{{\mathbb E}}
+
+\newcommand{\transpose}{{\mathrm T}}
+\DeclareMathOperator{\e}{e}
+\newcommand{\complexi}{{\mathrm{i}}}
+
+\newcommand{\id}{{\mathbb I}}
+\newcommand{\allone}{{\mathbb J}}
+
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+
+\newcommand{\poly}{{\mathrm{poly}}}
+
+\newcommand{\br}[1]{\mleft(#1\mright)}
+
+% linear algebra, geometry, QI
+\newcommand{\linear}{{\mathsf L}}
+\newcommand{\unitary}{{\mathsf U}}
+\newcommand{\sphere}{\mathsf{Sphere}}
+\newcommand{\qstate}{{\mathsf D}}
+\newcommand{\Pos}{{\mathsf{Pos}}}
+\newcommand*{\one}{\text{\usefont{U}{bbold}{m}{n}1}}
+
+\DeclareMathOperator{\hellinger}{{\mathfrak h}}
+
+% quantum physics notation
+\newcommand{\ket}[1]{| #1 \rangle}
+\newcommand{\bra}[1]{ \langle #1 |}
+\newcommand{\ketbra}[2]{| #1 \rangle\!\langle #2 |}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle }
+\newcommand{\density}[1]{\ketbra{#1}{#1}}
+\newcommand{\ancilla}{\ket{\bar{0}}}
+
+% mnemonics
+\newcommand{\eqdef}{\coloneqq}
+\newcommand{\tensor}{\otimes}
+\newcommand{\Tensor}{\bigotimes}
+\newcommand{\xor}{\oplus}
+\newcommand{\union}{\cup}
+\newcommand{\intersect}{\cap}
+\newcommand{\meet}{\wedge}
+\newcommand{\up}{\uparrow}
+\newcommand{\down}{\downarrow}
+\newcommand{\compose}{\circ}
+\newcommand{\adjoint}{*}
+
+% misc
+\newcommand{\suppress}[1]{}
+%\newcommand{\comment}[1]{}
+
+\newcommand{\etal}{\emph{et al.\/}}
+
+% information theory
+\DeclareMathOperator{\entropy}{H}    % Shannon entropy
+\DeclareMathOperator{\bentropy}{h}    % binary entropy function
+\DeclareMathOperator{\vnentropy}{S}    % von Neumann entropy
+\DeclareMathOperator{\mi}{I}    % mutual information
+\DeclareMathOperator{\polylog}{polylog} % poly-logarithm function
+
