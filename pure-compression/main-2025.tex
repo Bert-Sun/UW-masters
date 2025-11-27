@@ -52,6 +52,7 @@ Where the collection $\{\psi_x\}_x$ is pairwise orthogonal.
 Without loss of generality we may assume that the above density matrix has full support,
 as by taking a projection onto its support we find a trivial compression of the ensemble into a lower dimension with zero error. 
 Setting $n \eqdef \dim(A)$, we may then index the above sum ranging from $\{1, ..., n\}$.
+Furthermore, we can assume that $\beta_i$ is non-increasing.
 
 Up to a unitary on the reference and up to the reindexing above, we may then write the purification of the ensemble as:
 \begin{equation}\label{eq:purif}
@@ -67,6 +68,11 @@ Given a target space $A'$ with $\dim(A') < \dim(A)$, we wish to find the followi
         VU\ket{\rho^{RA}}\ket{\bar{0}}^{C_1C_2}
     }_2^2
 \]
+\begin{conjecture}
+The above maximization has value equal to the sum of the $d$ largest eigenvalues of 
+$\trace_{R}\ket{\rho}^{RA}$, or $\sum_{k=1}^d \beta_k$
+\end{conjecture}
+
 \subsubsection{Upper Bounds}
 With respect to the purification in \cref{eq:purif},
 we first characterize the action of $U$ on the subspace spanned by 
@@ -139,13 +145,38 @@ It follows that we may write:
 \end{align}
 Where the second last equality follows from $\psi_i$ being a basis for $A$ by assumption.
 
-We have then reduced the above maximization problem to the following:
+We have then upper bounded the original maximization to the following:
 \begin{equation*}
 \begin{array}{rl}
-    \text{maximize}    & \sum_i \beta_i \alpha_i \\
-    \text{subject to:} & \sum_i \alpha_i^2 \le d
+    \text{maximize}    & \left(\sum_i \beta_i \alpha_i\right)^2 \\
+    \text{subject to:} & \sum_i \alpha_i^2 \le d \\
+                       & \alpha_i \in [0,1]
 \end{array}
 \end{equation*}
+
+By applying Cauchy Schwarz to the above upper bounds the objective by:
+\begin{align*}
+    \left(\langle \sum_i \beta_i \alpha_i \rangle\right)^2
+        &= \left(\sum_i \sqrt{\beta_i} (\sqrt{\beta_i}\alpha_i)\right) \\
+    &\le \left(\sum_i \beta_i\right)\left(\beta_i\alpha_i^2\right)
+    &= \left(\beta_i\alpha_i^2\right)
+\end{align*}
+Since we have that $\norm{\beta_i}_1 = 1$ by assumption.
+
+Furthermore, since $\cdot^2$ is bijective on $[0,1]$ we change $\alpha_i^2$ to $\gamma_i$
+to obtain the following maximization problem:
+\begin{equation*}
+\begin{array}{rl}
+    \text{maximize}    & \sum_i \beta_i\gamma_i \\
+    \text{subject to:} & \sum_i \gamma_i \le d \\
+                       & \gamma_i \in [0,1]
+\end{array}
+\end{equation*}
+It is clear that the maximization is equal to the sum of the largest $d$ values of $\boldsymbol\beta$,
+attained by taking $\gamma_i$ to be $[i \le d]$.
+
+% Note that the max value is attained by the projective channel described in Nick's thesis,
+% we have given an upper bound but lower bound is omitted
 
 \bibliographystyle{plain}
 \bibliography{references}
@@ -155,4 +186,5 @@ We have then reduced the above maximization problem to the following:
 % \include{appendix}
 
 \end{document}
+
 
