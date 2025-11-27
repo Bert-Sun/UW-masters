@@ -1,0 +1,41 @@
+% \section{Project Description}
+\subsection{Introduction}
+Information theory traces its roots to Shannon's foundational insight that information can be quantified, and that data can be compressed with a rate in the limit equal to its entropy
+\cite{shannon}.
+The quantum analogue of this milestone was developed by Schumacher, who realized that pure quantum states can similarly be optimally compressed to the von Neumann entropy of the average state of the ensemble
+\cite{schumacher}.
+However, entanglement which is a fundamentally quantum pheonomenon remained to be exploited.
+Through exploiting entanglement, Khanian and Winter \cite{winter} showed that one can beat the Schumacher rate by half of the entropy of classical information available without disruptive measurement.
+
+In practice, especially in the current noisy intermediate-scale quantum (NISQ) era of computing,
+current state-of-the-art implementations can only operate in the non-asymptotic regime.
+Near-term quantum devices have limited coherence,
+and quantum memory and entanglement sharing is expensive.
+This has motivated the rise of one-shot information theory,
+where the task is to compress or communicate quantum states with only a single use of a quantum channel.
+
+\subsection{Research Objectives}
+Current approaches to solving the one-shot compression problem involve entropic calculations,
+using smooth entropy to produce dimensional or error bounds \cite{Renes_2012}.
+Though smooth entropy has found success in many scenarios,
+Hadiashar and Nayak \cite{BabHadiashar2020entanglementcostof}
+have shown that entropy alone is not sufficient to fully characterize communication costs.
+In particular, smooth entropy does not fully capture the cost of entanglement in communication.
+The goal for my research project is to analyze a known correspondence between pointed Hilbert bimodules and completely positive (CP) maps \cite{SkoufranisBimodule}
+representing a well-structured superset of quantum channels.
+Through this correspondence I hope to develop additional structural constraints on the encoding and decoding maps,
+which when combined with previous results from smooth entropy may allow better understanding of the exact communication and entanglement costs for a given task.
+
+\subsection{Methodology}
+Through a process known as Connes fusion \cite{CONNES1980153}
+Hilbert bimodules can be composed in a manner which nearly commutes with the CP map-bimodule correspondence.
+There is room for development in analyzing the bimodules induced by tensoring CP maps,
+which would lead to additional structural results on separable channels and
+local operations and classical communication (LOCC) protocols.
+
+\subsection{Significance}
+This project strengthens the mathematical foundation of quantum communication and hopes to characterize additional associated resource costs not fully captured by the current theory.
+One-shot compression is widely utilized across many different areas of quantum such as NISQ communication protocols \cite{NISQcomms} and cryptographic primitives \cite{Renes_2012} used in quantum key distribution.
+An operator-algebraic approach may reveal additional structural constraints and fundamental limitations in resource management not yet transparent in the current literature.
+
+
