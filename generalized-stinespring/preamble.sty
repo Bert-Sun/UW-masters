@@ -1,0 +1,184 @@
+% preamble.sty -- shared package loads and macros
+% Usage: \usepackage{preamble} in the document preamble.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{preamble}
+
+% ---------------------------------------------------------------------------
+% Page layout and fonts
+% ---------------------------------------------------------------------------
+\RequirePackage[margin=1in]{geometry}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{times}
+
+% ---------------------------------------------------------------------------
+% Math
+% ---------------------------------------------------------------------------
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{mathtools}
+\RequirePackage{mathrsfs}
+\RequirePackage[mathscr]{euscript}
+\RequirePackage{bm}
+\RequirePackage{upgreek}
+\RequirePackage{stmaryrd}
+\RequirePackage{dsfont}
+\RequirePackage{mleftright}
+\RequirePackage{relsize}
+
+% ---------------------------------------------------------------------------
+% Figures, tables, lists, misc
+% ---------------------------------------------------------------------------
+\RequirePackage{graphicx}
+\RequirePackage{subcaption}
+\RequirePackage{float}
+\RequirePackage{array}
+\RequirePackage{multicol}
+\RequirePackage{enumitem}
+\RequirePackage{scrextend}
+\RequirePackage{endnotes}
+\RequirePackage{xcolor}
+\RequirePackage{url}
+\RequirePackage{qcircuit}
+\RequirePackage{thm-restate}
+
+% hyperref and cleveref must come last, in this order
+\RequirePackage{hyperref}
+\RequirePackage{cleveref}
+
+\definecolor{DarkBlue}{rgb}{0,0,0.8}
+\definecolor{DarkOrange}{rgb}{0.8,0.4,0}
+\def\mylinkcolor{DarkBlue}
+\def\mysubcolor{DarkOrange}
+
+\hypersetup{
+  colorlinks=true,
+  urlcolor=\mylinkcolor,
+  linkcolor=\mylinkcolor,
+  citecolor=\mylinkcolor
+}
+
+\allowdisplaybreaks
+% Never break inline math at relations (=, \le, ...) or binary operators (+, \otimes, ...).
+\relpenalty=10000
+\binoppenalty=10000
+\numberwithin{equation}{section}
+
+% ---------------------------------------------------------------------------
+% Theorem environments
+% ---------------------------------------------------------------------------
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{fact}[theorem]{Fact}
+
+\renewcommand{\qed}{\hfill{$\rule{6pt}{6pt}$}}
+\renewenvironment{proof}{\noindent{\bfseries Proof:}}{\qed\par\medskip}
+\newenvironment{proofof}[1]{\noindent{\bfseries Proof of #1:}}{\qed\par\medskip}
+% Remarks get flexible space above (6pt, stretch to 8pt, shrink to 2pt when the
+% page is tight). \addvspace takes the larger of this and any space already
+% there, so it does not stack with the \medskip ending a proof or remark.
+\newlength{\remarkskip}
+\setlength{\remarkskip}{6pt plus 2pt minus 4pt}
+\newenvironment{remark}{\par\addvspace{\remarkskip}\noindent{\bfseries Remark:}}{\par\medskip}
+
+% \paragraph: same space above as a remark (article's default is
+% 3.25ex plus 1ex minus .2ex), still a bold run-in heading.
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\z@}%
+  {\remarkskip}{-1em}{\normalfont\normalsize\bfseries}}
+
+% ---------------------------------------------------------------------------
+% Number sets
+% ---------------------------------------------------------------------------
+\newcommand{\complex}{{\mathbb C}}
+\newcommand{\reals}{{\mathbb R}}
+\newcommand{\rationals}{{\mathbb Q}}
+\newcommand{\integers}{{\mathbb Z}}
+\newcommand{\naturals}{{\mathbb N}}
+
+% ---------------------------------------------------------------------------
+% General math notation
+% ---------------------------------------------------------------------------
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\trnorm}[1]{\left\| #1 \right\|_{\mathrm{tr}}}
+\newcommand{\size}[1]{\left| #1 \right|}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\floor}[1]{{\lfloor #1 \rfloor}}
+\newcommand{\ceil}[1]{{\lceil #1 \rceil}}
+\newcommand{\br}[1]{\mleft(#1\mright)}
+
+\DeclareMathOperator{\fidelity}{F}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\trace}{Tr}
+\DeclareMathOperator{\support}{supp}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\expct}{{\mathbb E}}
+\DeclareMathOperator{\Order}{O}
+\DeclareMathOperator{\tOrder}{\widetilde{O}}
+\DeclareMathOperator{\order}{o}
+\DeclareMathOperator{\polylog}{polylog}
+\DeclareMathOperator{\e}{e}
+
+\newcommand{\poly}{{\mathrm{poly}}}
+\newcommand{\transpose}{{\mathrm T}}
+\newcommand{\complexi}{{\mathrm{i}}}
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+
+% ---------------------------------------------------------------------------
+% Linear algebra, geometry, quantum information
+% ---------------------------------------------------------------------------
+\newcommand{\linear}{{\mathsf L}}
+\newcommand{\unitary}{{\mathsf U}}
+\newcommand{\qstate}{{\mathsf D}}
+\newcommand{\Pos}{{\mathsf{Pos}}}
+\newcommand{\sphere}{\mathsf{Sphere}}
+\newcommand{\id}{{\mathbb I}}
+\newcommand{\allone}{{\mathbb J}}
+\newcommand*{\one}{\text{\usefont{U}{bbold}{m}{n}1}}
+
+\DeclareMathOperator{\hellinger}{{\mathfrak h}}
+
+% Bra-ket notation
+\newcommand{\ket}[1]{| #1 \rangle}
+\newcommand{\bra}[1]{\langle #1 |}
+\newcommand{\ketbra}[2]{| #1 \rangle\!\langle #2 |}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\density}[1]{\ketbra{#1}{#1}}
+\newcommand{\ancilla}{\ket{\bar{0}}}
+
+% ---------------------------------------------------------------------------
+% Information theory
+% ---------------------------------------------------------------------------
+\DeclareMathOperator{\entropy}{H}    % Shannon entropy
+\DeclareMathOperator{\bentropy}{h}   % binary entropy
+\DeclareMathOperator{\vnentropy}{S}  % von Neumann entropy
+\DeclareMathOperator{\mi}{I}         % mutual information
+
+% ---------------------------------------------------------------------------
+% Mnemonics
+% ---------------------------------------------------------------------------
+\newcommand{\eqdef}{\coloneqq}
+\newcommand{\tensor}{\otimes}
+\newcommand{\Tensor}{\bigotimes}
+\newcommand{\xor}{\oplus}
+\newcommand{\union}{\cup}
+\newcommand{\intersect}{\cap}
+\newcommand{\meet}{\wedge}
+\newcommand{\up}{\uparrow}
+\newcommand{\down}{\downarrow}
+\newcommand{\compose}{\circ}
+\newcommand{\adjoint}{*}
+
+% ---------------------------------------------------------------------------
+% Misc
+% ---------------------------------------------------------------------------
+\newcommand{\suppress}[1]{}
+\newcommand{\etal}{\emph{et al.\/}}
+
+\endinput

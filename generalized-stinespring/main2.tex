@@ -1,0 +1,1009 @@
+\documentclass[12pt]{article}
+
+\usepackage{preamble}
+
+% ---------------------------------------------------------------------------
+% Document-specific macros
+% ---------------------------------------------------------------------------
+\newcommand{\anote}[1]{\textcolor{red}{\small\textbf{(Ashwin:} #1\textbf{)}}}
+\newcommand{\todo}[1]{\textcolor{\mysubcolor}{\small\textbf{[TODO:} #1\textbf{]}}}
+
+\newcommand{\alg}{\mathcal{A}}             % finite-dimensional C*-algebra
+\newcommand{\hilb}{\mathcal{H}}            % Hilbert space
+\newcommand{\dil}{\mathcal{K}}             % dilation space
+\newcommand{\bdd}[1]{\mathcal{B}\br{#1}}   % bounded operators
+\newcommand{\Mn}[1]{\mathrm{M}_{#1}}       % matrix algebra M_n(C)
+\newcommand{\algtensor}{\odot}             % algebraic tensor product
+\newcommand{\op}{^{\mathrm{op}}}           % opposite algebra
+\newcommand{\ip}[2]{\left\langle #1 , #2 \right\rangle}
+\newcommand{\ipphi}[2]{\left\langle #1 , #2 \right\rangle_{\varphi}}
+\newcommand{\rankone}[2]{\theta_{#1, #2}}  % w |-> <w, #2> #1
+\newcommand{\Ltwo}{L^2\br{\alg}}
+\newcommand{\vect}[1]{\widehat{#1}}
+\newcommand{\Ltn}{\hilb \tensor \Ltwo}
+\newcommand{\Fphi}{F_{\varphi}}
+\newcommand{\Choi}{C_{\varphi}}
+\newcommand{\comm}{\mathcal{C}}            % commutant rho(A)'
+\newcommand{\Esc}{E_{\complex 1}}          % expectation onto the scalars
+\newcommand{\ran}{\operatorname{ran}}
+
+% ---------------------------------------------------------------------------
+\title{\textbf{Stinespring's Theorem via the Choi Matrix:\\
+an \texorpdfstring{\(L^2\)}{L2} Route in Finite Dimensions}%
+\thanks{Acknowledgements common to all authors.}}
+
+\author{
+  Author One\thanks{Affiliation details, address, email.} \\
+  Affiliation
+  \and
+  Author Two\thanks{Affiliation details, address, email.} \\
+  U.\ Waterloo
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Let \(\alg\) be a finite-dimensional C\(^*\)-algebra with faithful tracial state
+\(\tau\). For every linear map \(\varphi : \alg \to \bdd{\hilb}\), Stinespring's
+sesquilinear form on \(\hilb \tensor L^2(\alg,\tau)\) is implemented by a single
+operator \(\Fphi\). It lies in the commutant
+\(\bdd{\hilb} \tensor \alg\op\) of the standard representation and, in matrix
+units, equals the Choi matrix. The correspondence \(\varphi \mapsto \Fphi\) is a
+linear bijection onto that commutant, and \(\varphi\) is completely positive
+exactly when \(\Fphi \ge 0\). This gives a short, self-contained proof of
+Stinespring's theorem~\cite{Stinespring1955} in which the quotient-and-completion
+step becomes \(\Fphi^{1/2}\), recovers Choi's theorem, and yields Jordan,
+Krein-space and two-sided dilations of non-completely-positive maps. For
+completely positive maps, \(\Fphi\) is the Radon--Nikodym derivative of
+\(\varphi\) with respect to \(a \mapsto \tau(a)\id\)~\cite{Arveson1969,
+BelavkinStaszewski1986,Raginsky2003}. \todo{one sentence on the generalization
+beyond finite dimensions, if any.}
+\end{abstract}
+
+\tableofcontents
+
+% ===========================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Stinespring's theorem~\cite{Stinespring1955} writes every completely positive map
+\(\varphi\) on a unital C\(^*\)-algebra as \(\varphi(a) = V^\adjoint\pi(a)V\). Its
+proof equips \(\alg \algtensor \hilb\) with a \(\varphi\)-dependent form and takes
+the separated completion. In finite dimensions, Choi's theorem~\cite{Choi1975}
+characterizes complete positivity by positivity of the Choi matrix.
+
+We connect the two. For finite-dimensional \(\alg\), we fix the space
+\(\Ltn\) in advance, using the GNS space of a faithful trace as in the theory of
+finite von Neumann algebras~\cite{AnantharamanPopa}. All dependence on \(\varphi\)
+is carried by one operator \(\Fphi\), which turns out to be the Choi matrix.
+
+\paragraph{Prior work.}
+For completely positive \(\varphi\), \(\Fphi\) is the Arveson /
+Belavkin--Staszewski Radon--Nikodym derivative~\cite{Arveson1969,
+BelavkinStaszewski1986} of \(\varphi\) with respect to the expectation onto the scalars
+\(\Esc(a) = \tau(a)\id_{\hilb}\). For full matrix algebras, Raginsky computes this
+derivative as a multiple of the Choi--Jamio\l{}kowski
+operator~\cite[Theorem~5.1]{Raginsky2003}. What we add is the following:
+\begin{itemize}
+  \item The argument runs in the other direction. The dilation of the reference
+    map is explicit, so the construction proves Stinespring's theorem rather
+    than assuming it.
+  \item It covers all finite-dimensional C\(^*\)-algebras, with \(\Fphi\) placed in
+    \(\bdd{\hilb} \tensor \alg\op\) by the commutation theorem
+    \(\lambda(\alg)' = R(\alg\op)\).
+  \item It extends to arbitrary linear maps.
+\end{itemize}
+\todo{Read Belavkin--Staszewski in full to confirm that direct sums and
+non-positive maps are not already covered there.}
+
+\paragraph{Results.}
+\Cref{thm:linear} constructs \(\Fphi\) for every linear map \(\varphi\) and
+identifies \(\varphi \mapsto \Fphi\) as a bijection onto the commutant.
+\Cref{thm:cp} gives the dilation of completely positive maps.
+\Cref{thm:choi} identifies \(\Fphi\) with the Choi matrix.
+\Cref{sec:non-cp} treats non-completely-positive maps.
+\Cref{sec:extremal} follows Naimark's \S19~\cite{Naimark1972} to derive the
+Radon--Nikodym theorem, pure maps and extreme UCP and CPTP maps from \(\Fphi\). It
+recovers the Choi and Kraus characterizations, including versions for direct
+sums.
+\Cref{sec:further} collects open directions. \todo{Generalization beyond the
+finite-dimensional case, e.g.\ to finite von Neumann algebras
+(\cref{sec:further}).}
+
+\paragraph{Acknowledgements.}
+Personal acknowledgements, grants, etc.
+
+% ===========================================================================
+\section{Preliminaries}
+\label{sec:prelim}
+
+\paragraph{Conventions.}
+Inner products are linear in the \emph{first} argument, and \(\rankone{u}{v}\) is
+the operator \(w \mapsto \ip{w}{v}u\). For a linear map \(\varphi\) we write
+\(\varphi_n \eqdef \id_{\Mn{n}} \tensor \varphi\), and
+\(\varphi^\sharp(a) \eqdef \varphi(a^\adjoint)^\adjoint\). \(S'\) denotes the
+commutant of a set of operators. \(\alg\op\) is \(\alg\) with product
+\(a\op b\op \eqdef (ba)\op\). The map \(\varphi\) is \emph{completely positive} if
+every \(\varphi_n\) is positive, and \emph{Hermitian} if \(\varphi^\sharp = \varphi\).
+
+\begin{theorem}[Stinespring~{\cite[Theorem~1]{Stinespring1955}}]
+\label{thm:stinespring}
+Let \(\alg\) be a unital C\(^*\)-algebra and \(\varphi : \alg \to \bdd{\hilb}\)
+completely positive. There are a Hilbert space \(\dil\), a \(*\)-representation
+\(\pi\) of \(\alg\) on \(\dil\), and a bounded \(V : \hilb \to \dil\) with
+\(\varphi(a) = V^\adjoint\pi(a)V\) and \(\norm{V}^2 = \norm{\varphi(1)}\).
+\end{theorem}
+\todo{Check the theorem number and the exact statement against the original
+paper.}
+
+Such a triple \((\pi, V, \dil)\) is a \emph{Stinespring dilation}. It is
+\emph{minimal} if \(\pi(\alg)V\hilb\) spans a dense subspace. Minimal dilations
+are unique up to a unitary intertwining \(\pi\) and \(V\)~\cite{Arveson1969},
+\cite[Chapter~4]{Paulsen2002}; this is not in Stinespring's paper. His proof
+puts the form
+\begin{equation}
+\label{eq:form}
+  \ipphi{x \tensor a}{y \tensor b} \eqdef \ip{\varphi(b^\adjoint a)x}{y}
+\end{equation}
+on \(\hilb \algtensor \alg\), shows it is positive semidefinite, and takes the
+separated completion. In that completion \(\pi\) is left multiplication and
+\(Vx = [x \tensor 1]\).
+
+% ===========================================================================
+\section{The Standard Form of a Finite-Dimensional Algebra}
+\label{sec:standard}
+
+From now on \(\alg\) is a finite-dimensional C\(^*\)-algebra. By the structure
+theorem~\cite[Theorem~III.1.1]{Davidson1996}, \cite{Takesaki1979},
+\begin{equation}
+\label{eq:structure}
+  \alg \cong \bigoplus_{k=1}^r \Mn{n_k}(\complex), \qquad a = (a_1, \dots, a_r).
+\end{equation}
+\todo{Check the theorem number in Davidson and add a precise reference in
+Takesaki, Vol.~I.}
+Let \(\iota_k\) and \(p_k\) be the inclusion of, and projection onto, the
+\(k\)-th summand, and set \(\varphi_k \eqdef \varphi \compose \iota_k\). Then
+\(\varphi = \sum_k \varphi_k \compose p_k\). Since \(\iota_k\) and \(p_k\) are
+\(*\)-homomorphisms, \(\varphi\) is completely positive if and only if every
+\(\varphi_k\) is.
+
+\paragraph{Traces.}
+Every faithful tracial state on \(\alg\) has the form
+\(\tau(a) = \sum_k t_k \trace(a_k)\) with \(t_k > 0\) and \(\sum_k t_k n_k = 1\).
+This is because a trace on \(\Mn{n}\) is a multiple of \(\trace\). The trace is
+unique, equal to \(\frac1n\trace\), exactly when \(\alg\) is a factor. Fix such a
+\(\tau\), and write \(c_k \eqdef t_k n_k = \tau(\iota_k(1))\).
+
+\paragraph{The space \(\Ltwo\).}
+\(\Ltwo = L^2(\alg, \tau)\) is \(\alg\) with inner product
+\(\ip{\vect a}{\vect b} \eqdef \tau(b^\adjoint a)\), and \(\Omega \eqdef \vect 1\).
+Since \(\tau\) is faithful and \(\dim \alg < \infty\), no quotient or completion is
+needed: \(a \mapsto \vect a\) is a linear bijection. The norm
+\(\norm{\vect a}_2 = \tau(a^\adjoint a)^{1/2} \le \norm a\) is equivalent to, but
+in general different from, the C\(^*\)-norm; for \(E_{11} \in \Mn n\) it equals
+\(n^{-1/2}\). The \emph{standard representation} \(\lambda\) and right
+multiplication \(R\) are
+\[
+  \lambda(a)\vect c \eqdef \vect{ac}, \qquad R_b\vect c \eqdef \vect{cb}.
+\]
+
+\begin{lemma}
+\label{lem:standard}
+\begin{enumerate}[label=(\roman*)]
+  \item \(\lambda\) is a faithful unital \(*\)-representation of \(\alg\), and
+    \(\lambda(\alg)\Omega = \Ltwo\).
+  \item \(b\op \mapsto R_b\) is a faithful unital \(*\)-representation of
+    \(\alg\op\).
+  \item \(\lambda(\alg)' = R(\alg\op)\).
+  \item For any Hilbert space \(\hilb\),
+    \((\id_{\hilb} \tensor \lambda(\alg))' = \bdd{\hilb} \tensor R(\alg\op)\), an
+    algebraic tensor product that is already a von Neumann algebra.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+(i) We have \(\tau(b^\adjoint ca) = \tau((c^\adjoint b)^\adjoint a)\), so
+\(\lambda(c)^\adjoint = \lambda(c^\adjoint)\), and \(\lambda(a)\Omega = \vect a\).
+(ii) \(R_bR_c = R_{cb}\), which is multiplicativity on \(\alg\op\). Adjoints use
+the trace property:
+\(\tau(d^\adjoint cb) = \tau(bd^\adjoint c) = \tau((db^\adjoint)^\adjoint c)\).
+(iii) Associativity gives \(\supseteq\). Conversely, if \(T\) commutes with
+\(\lambda(\alg)\) and \(T\Omega = \vect d\), then
+\(T\vect a = T\lambda(a)\Omega = \lambda(a)\vect d = R_d\vect a\).
+(iv) Since \(\dim\Ltwo < \infty\), write \(T = \sum_k S_k \tensor T_k\) with
+\(S_k \in \bdd\hilb\) linearly independent. If \(T\) commutes with
+\(\id \tensor \lambda(c)\), slicing with functionals dual to the \(S_k\) gives
+\([T_k, \lambda(c)] = 0\), so each \(T_k \in R(\alg\op)\) by~(iii).
+\end{proof}
+
+\begin{remark}
+\label{rem:op}
+\begin{enumerate}[label=(\alph*)]
+  \item In general \(\bdd{\Ltwo} \not\cong \alg \tensor \alg\op\). The algebra
+    generated by \(\lambda(\alg)\) and \(R(\alg\op)\) has commutant the centre of
+    \(\alg\). For example, \(\complex \oplus \complex\) gives \(\complex^4\)
+    versus \(\Mn 2\). Equality holds exactly for factors, and is not needed.
+  \item The blockwise transpose \(b\op \mapsto (b_k^\transpose)_k\) is a
+    \(*\)-isomorphism \(\alg\op \cong \alg\). So
+    \(\bdd\hilb \tensor R(\alg\op) \cong \alg \tensor \bdd\hilb\), non-canonically
+    since it depends on the matrix units.
+  \item (Blocks.) The map
+    \(U : \vect a \mapsto (c_k^{1/2}\vect{a_k})_k\) is a unitary
+    \(\Ltwo \to \bigoplus_k L^2(\Mn{n_k}, \frac{1}{n_k}\trace)\). It carries
+    \(\lambda\), \(R\) and \(\Omega\) to the direct sums of their counterparts, with
+    \(U\Omega = (c_k^{1/2}\Omega_k)_k\). This follows from
+    \(\tau(b^\adjoint a) = \sum_k c_k\,\frac{1}{n_k}\trace(b_k^\adjoint a_k)\).
+\end{enumerate}
+\end{remark}
+
+% ===========================================================================
+\section{The Operator \texorpdfstring{\(\Fphi\)}{F}}
+\label{sec:F}
+
+Let \(\hilb\) be a Hilbert space, \(\varphi : \alg \to \bdd\hilb\) linear,
+\[
+  \rho(a) \eqdef \id_{\hilb} \tensor \lambda(a), \qquad
+  Vx \eqdef x \tensor \Omega, \qquad
+  \comm \eqdef \rho(\alg)' = \bdd\hilb \tensor R(\alg\op).
+\]
+Since \(\dim\Ltwo < \infty\), \(\Ltn = \hilb \algtensor \alg\), so the
+form~\eqref{eq:form} is defined on all of \(\Ltn\). \(V\) is an isometry, but
+\(V^\adjoint\rho(a)V = \tau(a)\id_{\hilb}\). Thus \((\rho, V, \Ltn)\) is the
+minimal dilation of the expectation onto the scalars \(\Esc(a) = \tau(a)\id\), not of \(\varphi\);
+the map \(\varphi\) enters only through~\eqref{eq:form}.
+
+\begin{theorem}[Linear maps]
+\label{thm:linear}
+\begin{enumerate}[label=(\alph*)]
+  \item \label{it:exists}
+    There is a unique \(\Fphi \in \bdd{\Ltn}\) with
+    \(\ipphi uv = \ip{\Fphi u}{v}\) for all \(u, v\).
+  \item \label{it:comm}
+    \(\Fphi \in \comm\), and
+    \(\varphi(a) = V^\adjoint\rho(a)\Fphi V\) for all \(a \in \alg\).
+  \item \label{it:bij}
+    \(\varphi \mapsto \Fphi\) is a linear bijection from the linear maps
+    \(\alg \to \bdd\hilb\) onto \(\comm\), with inverse
+    \(T \mapsto \varphi_T(a) \eqdef V^\adjoint\rho(a)TV\).
+  \item \label{it:adj}
+    \(F_{\varphi^\sharp} = \Fphi^\adjoint\). In particular, \(\varphi\) is
+    Hermitian if and only if \(\Fphi = \Fphi^\adjoint\).
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Fix an orthonormal basis \(\set{\vect{u}_p}_{p=1}^m\) of \(\Ltwo\). Write
+\(u = \sum_p x_p \tensor \vect u_p\) and \(v = \sum_q y_q \tensor \vect u_q\), so
+that \(\norm u^2 = \sum\norm{x_p}^2\).
+
+(a) The form is induced by a map linear in \(x, a\) and conjugate linear in
+\(y, b\), so it is well defined. It is bounded:
+\(\abs{\ipphi uv} \le m\max_{p,q}\norm{\varphi(u_q^\adjoint u_p)}\,\norm u\norm v\).
+A bounded sesquilinear form is implemented by a unique bounded
+operator~\cite[Theorem~II.2.2]{Conway1990}. \todo{Check the theorem number in
+Conway.}
+
+(b) Using \(\rho(c)^\adjoint = \rho(c^\adjoint)\),
+\[
+  \ip{\Fphi\rho(c)(x \tensor \vect a)}{y \tensor \vect b}
+  = \ip{\varphi(b^\adjoint ca)x}{y}
+  = \ip{\Fphi(x \tensor \vect a)}{\rho(c^\adjoint)(y \tensor \vect b)},
+\]
+so \(\Fphi\rho(c) = \rho(c)\Fphi\), and \(\comm = \bdd\hilb \tensor R(\alg\op)\)
+by \cref{lem:standard}(iv). Then
+\(\ip{V^\adjoint\rho(a)\Fphi Vx}{y} = \ip{\Fphi(x \tensor \vect a)}{y \tensor \Omega}
+= \ip{\varphi(a)x}{y}\).
+
+(c) Linearity follows from uniqueness in~(a), and injectivity from~(b). For
+\(T \in \comm\),
+\(\ip{\varphi_T(b^\adjoint a)x}{y}
+= \ip{\rho(b^\adjoint a)T(x \tensor \Omega)}{y \tensor \Omega}
+= \ip{T(x \tensor \vect a)}{y \tensor \vect b}\), so \(F_{\varphi_T} = T\).
+
+(d) \(\ip{\Fphi^\adjoint(x \tensor \vect a)}{y \tensor \vect b}
+= \overline{\ip{\varphi(a^\adjoint b)y}{x}}
+= \ip{\varphi^\sharp(b^\adjoint a)x}{y}\). Then apply~(c).
+\end{proof}
+
+\begin{remark}
+\label{rem:rn}
+For completely positive \(\varphi\), \cref{thm:linear}\ref{it:comm} is the
+Radon--Nikodym theorem~\cite{Arveson1969,BelavkinStaszewski1986} for \(\varphi\)
+relative to \(\Esc\), whose minimal dilation is \((\rho, V, \Ltn)\).
+\Cref{thm:linear} needs no positivity, and its proof does not use
+\cref{thm:stinespring}. For \(\hilb = \complex^d\), both sides of
+\ref{it:bij} have dimension \(d^2\dim\alg\).
+\end{remark}
+
+% ===========================================================================
+\section{Completely Positive Maps}
+\label{sec:cp}
+
+\begin{theorem}
+\label{thm:cp}
+\begin{enumerate}[label=(\alph*)]
+  \item \label{it:pos}
+    \(\varphi\) is completely positive if and only if \(\Fphi \ge 0\).
+  \item \label{it:dil}
+    If \(\Fphi \ge 0\), let \(\dil \eqdef \overline{\ran}\,\Fphi^{1/2}\),
+    \(\pi \eqdef \rho|_{\dil}\) and \(W \eqdef \Fphi^{1/2}V\). Then \((\pi, W, \dil)\)
+    is a minimal Stinespring dilation of \(\varphi\) with \(W^\adjoint W = \varphi(1)\).
+  \item \label{it:compare}
+    The map \([x \tensor a] \mapsto \Fphi^{1/2}(x \tensor \vect a)\) is a unitary
+    from Stinespring's space onto \(\dil\), intertwining the representations and
+    the dilation operators.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+(b) \(\Fphi^{1/2} \in \comm\), so \(\dil\) reduces \(\rho\) and \(\pi\) is a unital
+\(*\)-representation. By \cref{thm:linear}\ref{it:comm},
+\(W^\adjoint\pi(a)W = V^\adjoint\rho(a)\Fphi V = \varphi(a)\). Minimality holds
+because \(\Span\pi(\alg)W\hilb = \Fphi^{1/2}(\Ltn)\).
+
+(a) Suppose \(\varphi\) is completely positive. For
+\(u = \sum_p x_p \tensor \vect{a_p}\), \(\ip{\Fphi u}{u} =
+\ip{\varphi_m([a_q^\adjoint a_p]_{q,p})\vec x}{\vec x} \ge 0\), since
+\([a_q^\adjoint a_p] = X^\adjoint X\) for the row \(X = (a_1, \dots, a_m)\). This is
+Stinespring's argument~\cite{Stinespring1955}; see also
+\cite[Theorem~4.1]{Paulsen2002}. Conversely, if \(\Fphi \ge 0\) then~(b), which
+used only \(\Fphi \ge 0\), exhibits \(\varphi\) as a compression of a
+\(*\)-representation, which is completely positive.
+
+(c) \(\norm{\Fphi^{1/2}u}^2 = \ipphi uu\), so the map is isometric on the
+separated quotient. Its range is dense, and it intertwines because
+\(\Fphi^{1/2} \in \comm\) and \([x \tensor 1] \mapsto Wx\).
+\end{proof}
+
+By \cref{rem:op}(c), everything splits over the summands of~\eqref{eq:structure}.
+Under \(\id \tensor U\), \(\Fphi \mapsto \bigoplus_k c_k^{-1}F_{\varphi_k}\),
+\(\dil = \bigoplus_k \dil_k\), \(\pi = \bigoplus_k \pi_k\) and
+\(W = (W_k)_k\), where \(F_{\varphi_k}\) is taken with respect to
+\(\frac{1}{n_k}\trace\). This follows from
+\(\ipphi{x \tensor \vect a}{y \tensor \vect b} = \sum_k
+\ip{x \tensor \vect{a_k}}{y \tensor \vect{b_k}}_{\varphi_k}\) and uniqueness in
+\cref{thm:linear}\ref{it:exists}. So it suffices to treat a single factor
+\(\Mn n\).
+
+\subsection{Minimality and cyclicity: the GNS case}
+\label{sec:gns}
+
+Stinespring's theorem generalizes the GNS construction, and minimality of a
+dilation generalizes cyclicity of the GNS vector. Let \((\pi, W, \dil)\) be any
+Stinespring dilation of a completely positive \(\varphi : \alg \to \bdd\hilb\).
+For a unit vector \(x \in \hilb\), the vector \(Wx\) satisfies
+\(\ip{\pi(a)Wx}{Wx} = \ip{\varphi(a)x}{x}\). So the cyclic subspace
+\(\overline{\pi(\alg)Wx}\) with the vector \(Wx\) is a GNS representation of
+the positive functional \(\omega_x \compose \varphi\), where
+\(\omega_x = \ip{\cdot\,x}{x}\). The dilation is minimal exactly when \(\dil\) is
+the closed linear span of these GNS spaces as \(x\) ranges over \(\hilb\).
+Two cases are worth recording.
+\begin{enumerate}[label=(\roman*)]
+  \item \(\hilb = \complex\). Then \(W\) is determined by \(\xi \eqdef W1\), and
+    \(\varphi(a) = \ip{\pi(a)\xi}{\xi}\). Minimality says \(\pi(\alg)\xi\) is
+    dense, which is cyclicity of \(\xi\). So a minimal Stinespring dilation of a
+    positive functional is exactly a GNS triple. Uniqueness of minimal dilations
+    up to unitary equivalence~\cite[Proposition~4.2]{Paulsen2002} specializes to
+    uniqueness of the GNS representation. \todo{Check the proposition number in
+    Paulsen.}
+  \item The model of \cref{sec:F}. By \cref{lem:standard}(i), the vector
+    \(\Omega\) is cyclic for \(\lambda\), so
+    \(\Span\rho(\alg)V\hilb = \Ltn\). Thus \(\Ltwo\) is the GNS space of \(\tau\)
+    and \((\rho, V, \Ltn)\) is the minimal dilation of \(\Esc\). The minimality in
+    \cref{thm:cp}\ref{it:dil} is inherited from this one GNS cyclicity, because
+    \(\Fphi^{1/2}\) commutes with \(\rho(\alg)\):
+    \[
+      \Span\pi(\alg)W\hilb = \Fphi^{1/2}\Span\rho(\alg)V\hilb .
+    \]
+\end{enumerate}
+
+For \(\hilb = \complex\) the construction of \cref{sec:F} becomes the familiar
+description of the GNS space of a functional inside \(L^2(\alg,\tau)\). Here
+\(\Ltn = \Ltwo\), \(\rho = \lambda\), \(V1 = \Omega\) and \(\comm = R(\alg\op)\).
+Since \(\tau\) is faithful and \(\dim\alg < \infty\), every linear functional
+has the form \(f = \tau(\cdot\,h_f)\) for a unique \(h_f \in \alg\), the
+\emph{density} of \(f\) relative to \(\tau\).
+
+\begin{proposition}[Functionals]
+\label{prop:gns}
+Let \(f = \tau(\cdot\,h)\) be a linear functional on \(\alg\).
+\begin{enumerate}[label=(\alph*)]
+  \item \label{it:gns-F}
+    \(F_f = R_h\).
+  \item \label{it:gns-pos}
+    \(f\) is positive \(\iff\) \(h \ge 0\) \(\iff\) \(F_f \ge 0\) \(\iff\) \(f\) is
+    completely positive.
+  \item \label{it:gns-dil}
+    If \(f \ge 0\), let \(p\) be the support projection of \(h\). The dilation of
+    \cref{thm:cp}\ref{it:dil} is
+    \[
+      \dil = \set{\vect{ap} : a \in \alg}, \qquad
+      \pi(a) = \lambda(a)|_{\dil}, \qquad
+      \xi_f \eqdef W1 = \vect{h^{1/2}},
+    \]
+    and \(\vect a \mapsto \vect{ah^{1/2}}\) induces a unitary from the GNS space
+    \(L^2(\alg, f)\) onto \(\dil\) that carries the GNS vector \(\vect 1\) to
+    \(\xi_f\). The GNS null space is
+    \(\set{a : f(a^\adjoint a) = 0} = \alg(1 - p)\).
+  \item \label{it:gns-faithful}
+    \(f\) is faithful \(\iff\) \(h\) is invertible \(\iff\) \(\dil = \Ltwo\). In
+    that case \(\xi_f\) is cyclic and separating for \(\lambda(\alg)\).
+  \item \label{it:gns-choi}
+    For \(\alg = \Mn n\) with \(\tau = \frac1n\trace\), the density matrix of
+    \(f\) is \(D_f = h/n\), and its Choi matrix is
+    \(C_f = [f(E_{ij})]_{ij} = D_f^\transpose\). Under the identification of
+    \cref{thm:choi}, \(F_f = R_h\) corresponds to
+    \(n(\id_n \tensor C_f) = \id_n \tensor h^\transpose\).
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(a) \(\ip{R_h\vect a}{\vect b} = \tau(b^\adjoint ah) = f(b^\adjoint a)
+= \ip{F_f\vect a}{\vect b}\).
+(b) If \(f\) is positive and \(e\) is a unit vector in the \(k\)-th summand, then
+for the rank-one projection \(q = \iota_k(\rankone ee)\) we get
+\(0 \le f(q) = \tau(qhq) = t_k\ip{h_ke}{e}\). So \(h \ge 0\). Since
+\(b\op \mapsto R_b\) is a \(*\)-representation of \(\alg\op\) and \(h\op \ge 0\) in
+\(\alg\op\), \(h \ge 0\) gives \(R_h \ge 0\). Then \(F_f \ge 0\) by~(a), and
+\(f\) is completely positive by \cref{thm:cp}\ref{it:pos}. Completely positive
+maps are positive.
+(c) \(F_f^{1/2} = R_{h^{1/2}}\), whose range is
+\(\set{\vect{ah^{1/2}}} = \set{\vect{ap}}\), since \(h^{1/2}\) is invertible in
+\(p\alg p\). Also \(W1 = R_{h^{1/2}}\Omega = \vect{h^{1/2}}\). Finally
+\(\norm{\vect{ah^{1/2}}}_2^2 = \tau(h^{1/2}a^\adjoint ah^{1/2}) = f(a^\adjoint a)\),
+so the map is isometric on the GNS quotient. It kills exactly
+\(\set{a : ah^{1/2} = 0} = \alg(1-p)\), it is onto \(\dil\), and it intertwines
+left multiplication.
+(d) Faithfulness means the null space \(\alg(1-p)\) is zero, that is \(p = 1\).
+Then \(\pi(a)\xi_f = 0\) forces \(ah^{1/2} = 0\), so \(a = 0\).
+(e) \(f(E_{ij}) = \frac1n\trace(E_{ij}h) = \frac1n h_{ji}\).
+\end{proof}
+
+\begin{remark}
+In \ref{it:gns-dil}, \(\xi_f = \vect{h^{1/2}}\) is the representative of \(f\) in
+the positive cone \(\set{\vect b : b \ge 0}\) of \(\Ltwo\). For faithful \(f\)
+this is the standard-form picture of Tomita--Takesaki theory, here with no
+modular theory needed because \(\tau\) is a trace. \todo{Add a reference for the
+natural cone and vector representatives (e.g.\ Takesaki, Vol.~II).}
+\end{remark}
+
+\paragraph{Abelian codomains.}
+Positive functionals are automatically completely positive, as
+\ref{it:gns-pos} shows. More generally, a positive map into an abelian
+C\(^*\)-algebra is completely positive~\cite[Theorem~4]{Stinespring1955},
+\cite[Theorem~3.9]{Paulsen2002}. \todo{Check both theorem numbers.} In finite
+dimensions this also follows from the operator \(\Fphi\), and the proof gives
+the minimal dilation explicitly as a direct sum of amplified GNS
+representations.
+
+\begin{corollary}
+\label{cor:abelian}
+Let \(\hilb\) be finite-dimensional, and let \(\varphi : \alg \to \bdd\hilb\) be
+positive with range in an abelian \(*\)-subalgebra. Let
+\(P_1, \dots, P_m\) be the minimal projections of the unital \(*\)-algebra this
+range generates. Then
+\(\varphi(a) = \sum_k f_k(a)P_k\) for positive functionals
+\(f_k = \tau(\cdot\,h_k)\), and
+\[
+  \Fphi = \sum_{k=1}^m P_k \tensor R_{h_k} \ge 0 .
+\]
+So \(\varphi\) is completely positive. Its minimal dilation is
+\(\dil = \bigoplus_k P_k\hilb \tensor \dil_{f_k}\) with
+\(\pi = \bigoplus_k \id \tensor \pi_{f_k}\) and
+\(Wx = \sum_k P_kx \tensor \xi_{f_k}\), where \((\pi_{f_k}, \xi_{f_k}, \dil_{f_k})\)
+is the GNS triple of \cref{prop:gns}\ref{it:gns-dil}.
+\end{corollary}
+\begin{proof}
+The algebra generated by the range is spanned by the pairwise orthogonal
+projections \(P_k\), which sum to \(\id\), so \(\varphi(a) = \sum_k f_k(a)P_k\)
+for linear functionals \(f_k\). For a unit vector \(x_k \in P_k\hilb\),
+\(f_k(a) = \ip{\varphi(a)x_k}{x_k}\), so each \(f_k\) is positive. Then
+\[
+  \ip{\varphi(b^\adjoint a)x}{y}
+  = \sum_k f_k(b^\adjoint a)\ip{P_kx}{y}
+  = \sum_k \ip{(P_k \tensor R_{h_k})(x \tensor \vect a)}{y \tensor \vect b},
+\]
+by \cref{prop:gns}\ref{it:gns-F}. Each \(P_k \tensor R_{h_k}\) is a product of
+commuting positive operators, so \(\Fphi \ge 0\), and \cref{thm:cp}\ref{it:pos}
+applies. Finally,
+\(\Fphi^{1/2} = \sum_k P_k \tensor R_{h_k^{1/2}}\), and
+\cref{prop:gns}\ref{it:gns-dil} identifies its range and \(\Fphi^{1/2}V\).
+\end{proof}
+\todo{For infinite-dimensional \(\hilb\) and a general abelian von Neumann
+algebra, replace the sum by a spectral integral
+\(\Fphi = \int dE(\omega) \tensor R_{h(\omega)}\), and compare with Stinespring's
+proof. Note also the dual statement: a positive map \emph{on} an abelian
+algebra is completely positive~\cite{Stinespring1955}, which here would say
+that for abelian \(\alg\), \(\Fphi \ge 0\) follows from positivity alone.}
+
+% ===========================================================================
+\section{The Choi Matrix}
+\label{sec:choi}
+
+\begin{theorem}
+\label{thm:choi}
+Let \(\alg = \Mn n\), \(\tau = \frac1n\trace\), \(\varphi : \Mn n \to \bdd\hilb\)
+linear, and \(\Choi \eqdef \sum_{j,l} E_{jl} \tensor \varphi(E_{jl})\). Under
+\(\vect{E_{ij}} \mapsto n^{-1/2}e_i \tensor e_j\), and with \(\hilb\) moved last,
+\[
+  \Fphi = n\,(\id_n \tensor \Choi).
+\]
+For \(\alg = \bigoplus_k \Mn{n_k}\), accordingly
+\(\Fphi \cong \bigoplus_k t_k^{-1}(\id_{n_k} \tensor C_{\varphi_k})\).
+\end{theorem}
+\begin{proof}
+In any orthonormal basis, comparing matrix entries gives
+\(\Fphi = \sum_{p,q}\varphi(u_p^\adjoint u_q) \tensor \rankone{\vect u_p}{\vect u_q}\).
+Take \(u_{ij} = n^{1/2}E_{ij}\). Then
+\(u_{ij}^\adjoint u_{i'l} = n\delta_{ii'}E_{jl}\), and
+\(\sum_i \rankone{\vect u_{ij}}{\vect u_{il}} \mapsto \id_n \tensor E_{jl}\).
+The direct-sum case follows from \cref{sec:cp} and \(c_k^{-1}n_k = t_k^{-1}\).
+\end{proof}
+
+\begin{corollary}[Choi~\cite{Choi1975}]
+\label{cor:choi}
+\(\varphi : \Mn n \to \bdd\hilb\) is completely positive if and only if
+\(\Choi \ge 0\). For \(\alg = \bigoplus_k \Mn{n_k}\), \(\varphi\) is completely
+positive if and only if every \(C_{\varphi_k} \ge 0\).
+\end{corollary}
+
+\begin{remark}
+\label{rem:legs}
+Under this identification, \(\lambda(a) = a \tensor \id_n\) and
+\(R_b = \id_n \tensor b^\transpose\). So \(\id_n\) is the \(\lambda\)-leg and the
+Choi matrix sits on the \(\alg\op\)-leg, as \cref{thm:linear}\ref{it:comm}
+predicts. In \(\bdd\hilb \tensor \alg\op\),
+\(\Fphi = n\sum_{j,l}\varphi(E_{jl}) \tensor E_{lj}\op\).
+For \(\hilb = \complex^d\), \(\dim\dil = n\operatorname{rank}\Choi\). This matches
+\(\dil \cong \complex^n \tensor \complex^\kappa\), \(\pi(a) = a \tensor \id_\kappa\),
+with multiplicity \(\kappa = \operatorname{rank}\Choi\). The Choi identification
+holds for every linear \(\varphi\), since its proof uses no positivity.
+\end{remark}
+
+% ===========================================================================
+\section{Maps That Are Not Completely Positive}
+\label{sec:non-cp}
+
+\begin{theorem}
+\label{thm:non-cp}
+Let \(\varphi : \alg \to \bdd\hilb\) be linear.
+\begin{enumerate}[label=(\alph*)]
+  \item \label{it:jordan}
+    (Jordan.) If \(\varphi\) is Hermitian and \(\Fphi = F_+ - F_-\) with
+    \(F_\pm \ge 0\) and \(F_+F_- = 0\), then \(F_\pm \in \comm\). Moreover
+    \(\varphi = \varphi_{F_+} - \varphi_{F_-}\), a difference of completely
+    positive maps.
+  \item \label{it:krein}
+    (Krein.) If \(\varphi\) is Hermitian, let \(\dil = \overline{\ran}\abs\Fphi\),
+    \(\pi = \rho|_{\dil}\), \(W = \abs\Fphi^{1/2}V\) and
+    \(\Sigma = \operatorname{sgn}(\Fphi)|_{\dil}\). Then
+    \(\Sigma = \Sigma^\adjoint = \Sigma^{-1}\) commutes with \(\pi(\alg)\), and
+    \(\varphi(a) = W^\adjoint\pi(a)\Sigma W\).
+  \item \label{it:four}
+    (Four maps.) \(\varphi = \varphi_1 + i\varphi_2\) with
+    \(\varphi_1 = \frac12(\varphi + \varphi^\sharp)\) and
+    \(\varphi_2 = \frac1{2i}(\varphi - \varphi^\sharp)\) Hermitian, and
+    \(F_{\varphi_1} = \operatorname{Re}\Fphi\),
+    \(F_{\varphi_2} = \operatorname{Im}\Fphi\). Hence \(\varphi\) is a combination
+    of four completely positive maps.
+  \item \label{it:two-sided}
+    (Two-sided.) With polar decomposition \(\Fphi = U\abs\Fphi\),
+    \(W_1 = \abs{\Fphi^\adjoint}^{1/2}V\) and \(W_2 = U\abs\Fphi^{1/2}V\), we have
+    \(\varphi(a) = W_1^\adjoint\rho(a)W_2\) and \(\norm{W_1}\norm{W_2} \le \norm\Fphi\).
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+All of \(F_\pm\), \(\abs\Fphi\), \(\operatorname{sgn}\Fphi\), \(U\) and
+\(\abs{\Fphi^\adjoint}\) are obtained from \(\Fphi\) by functional calculus or polar
+decomposition, so they lie in the von Neumann algebra \(\comm\). (a) follows from
+\cref{thm:linear}\ref{it:bij} and \cref{thm:cp}\ref{it:pos}.
+(b) follows from \(\Fphi = \abs\Fphi^{1/2}\operatorname{sgn}(\Fphi)\abs\Fphi^{1/2}\) and
+\cref{thm:linear}\ref{it:comm}. (c) follows from \cref{thm:linear}\ref{it:adj}
+and~(a). For (d), use
+\(\Fphi = \abs{\Fphi^\adjoint}^{1/2}U\abs\Fphi^{1/2}\) and
+\cref{thm:linear}\ref{it:comm}.
+\end{proof}
+
+\begin{remark}
+In~\ref{it:krein}, \(\dil\) with \(\ip{\Sigma\cdot}{\cdot}\) is a Krein space with fundamental symmetry
+\(\Sigma\), and \(\pi(a^\adjoint)\) is the \(\Sigma\)-adjoint of \(\pi(a)\). (We
+avoid the customary letter \(J\), the standard notation for the conjugation
+\(\hat a \mapsto \widehat{a^\adjoint}\) on \(\Ltwo\).) For completely positive \(\varphi\), \(\Sigma = \id\) and this is \cref{thm:cp}\ref{it:dil}.
+\todo{Locate the existing literature on Krein-space Stinespring dilations of
+Hermitian maps and compare.}
+
+Part~\ref{it:two-sided} has the shape of the Wittstock / Haagerup--Paulsen
+theorem~\cite[Theorem~8.4]{Paulsen2002} \todo{check theorem number}, where
+\(\norm{V_1}\norm{V_2} = \norm\varphi_{cb}\) can be attained.
+\todo{Compare \(\norm\Fphi\) with \(\norm\varphi_{cb}\). By \cref{thm:choi}, for
+\(\alg = \Mn n\), \(\norm\Fphi = n\norm\Choi\). Can the polar decomposition be
+chosen to attain \(\norm\varphi_{cb}\)?}
+
+For positive maps that are not completely positive, \(\Fphi\) is self-adjoint but
+\(F_- \ne 0\). \todo{Characterize positivity, or \(k\)-positivity, of \(\varphi\)
+in terms of \(\Fphi\). For \(\alg = \Mn n\) this should recover block-positivity
+of the Choi matrix.}
+\end{remark}
+
+% ===========================================================================
+\section{Domination and Extremal Maps}
+\label{sec:extremal}
+
+This section follows the structure of Naimark's treatment of positive functionals
+and irreducible representations~\cite[\S19]{Naimark1972}, with positive functionals
+replaced by CP maps and the GNS form replaced by \(\Fphi\). The dictionary is:
+\begin{center}
+\small
+\begin{tabular}{p{0.44\textwidth}p{0.48\textwidth}}
+  Naimark \S19 & here \\ \hline
+  positive functional \(f\), cyclic representation \(x \mapsto A_x\)
+    & CP map \(\varphi\), dilation \((\pi, W, \dil)\) of \cref{thm:cp} \\
+  \(f_1\) dominated by \(f\): \(\lambda f - f_1 \ge 0\)
+    & \(\psi \le \lambda\varphi\): \(\lambda\varphi - \psi\) CP \\
+  \(f_1(x) = (A_x B\xi_0, \xi_0)\), \(B \in \{A_x\}'\) (Thm.~1)
+    & \(\psi(a) = W^\adjoint\pi(a)TW\), \(T \in \pi(\alg)'\) (\cref{thm:rn}) \\
+  \(C_f \cong R_f'\), \(f \leftrightarrow \id\) (subsec.~2)
+    & \(\mathcal{D}_\varphi \cong \pi(\alg)'\), \(\varphi \leftrightarrow \id\) (\cref{thm:rn}) \\
+  indecomposable \(\Leftrightarrow\) irreducible (Thm.~2)
+    & pure \(\Leftrightarrow\) irreducible \(\Leftrightarrow\) Choi rank one (\cref{thm:pure}) \\
+  normalized states, Krein--Milman (subsec.~4)
+    & UCP / CPTP maps and their extreme points (\cref{thm:extreme}) \\
+\end{tabular}
+\end{center}
+\todo{Check the edition and page numbers of Naimark: the attached scan is
+\S19, pp.~266--270.}
+
+Throughout, \(\varphi : \alg \to \bdd\hilb\) is completely positive,
+\((\pi, W, \dil)\) is its dilation from \cref{thm:cp}, and \(P\) is the projection
+onto \(\dil = \overline{\ran}\,\Fphi^{1/2}\). Since \(P\) is the support projection
+of \(\Fphi \in \comm\), we have \(P \in \comm\). So an operator \(T\) on \(\dil\)
+commutes with \(\pi(\alg)\) exactly when \(T \oplus 0 \in \comm\), and we identify
+\(\pi(\alg)'\) with \(P\comm P\). For \(T \in \pi(\alg)'\) put
+\[
+  \psi_T(a) \eqdef W^\adjoint \pi(a) T W .
+\]
+For maps \(\psi, \varphi\) we write \(\psi \le \varphi\) if \(\varphi - \psi\) is
+completely positive.
+
+\subsection{Domination (Naimark \S19.1--2)}
+\label{sec:domination}
+
+\begin{theorem}[Radon--Nikodym]
+\label{thm:rn}
+\begin{enumerate}[label=(\alph*)]
+  \item \label{it:rn-order}
+    For linear \(\psi\) and \(\lambda \ge 0\): \(0 \le \psi \le \lambda\varphi\) if
+    and only if \(0 \le F_\psi \le \lambda\Fphi\).
+  \item \label{it:rn-T}
+    If \(0 \le \psi \le \lambda\varphi\), there is a unique \(T \in \pi(\alg)'\) with
+    \(0 \le T \le \lambda\) and \(\psi = \psi_T\). Moreover
+    \(F_{\psi_T} = \Fphi^{1/2}\,T\,\Fphi^{1/2}\).
+  \item \label{it:rn-alg}
+    \(T \mapsto \psi_T\) is a linear bijection from \(\pi(\alg)'\) onto
+    \(\mathcal{D}_\varphi \eqdef \Span\set{\psi : 0 \le \psi \le \lambda\varphi
+    \text{ for some } \lambda}\). It satisfies \(\psi_{T^\adjoint} = \psi_T^\sharp\),
+    \(\psi_{\id} = \varphi\), and \(\psi_T\) is CP exactly when \(T \ge 0\).
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+(a) By \cref{thm:linear}\ref{it:bij}, \(F\) is linear, and by
+\cref{thm:cp}\ref{it:pos}, \(\lambda\varphi - \psi\) is CP if and only if
+\(F_{\lambda\varphi - \psi} = \lambda\Fphi - F_\psi \ge 0\).
+
+(b) We follow Naimark's proof of~\cite[\S19, Theorem~1]{Naimark1972}. On the dense
+subspace \(\Fphi^{1/2}(\Ltn)\) of \(\dil\), define
+\[
+  \br{\Fphi^{1/2}u, \Fphi^{1/2}v}_1 \eqdef \ip{F_\psi u}{v}.
+\]
+It is well defined. If \(\Fphi^{1/2}u = 0\) then
+\(\ip{F_\psi u}{u} \le \lambda\norm{\Fphi^{1/2}u}^2 = 0\), so \(F_\psi^{1/2}u = 0\)
+and \(F_\psi u = 0\). The same inequality gives
+\(0 \le (\xi, \xi)_1 \le \lambda\norm\xi^2\). So the form extends to \(\dil\) and is
+implemented by \(T \in \bdd\dil\) with \(0 \le T \le \lambda\) and
+\(F_\psi = \Fphi^{1/2}T\Fphi^{1/2}\). For \(c \in \alg\), using
+\(\Fphi^{1/2}, F_\psi \in \comm\),
+\[
+  \ip{T\pi(c)\Fphi^{1/2}u}{\Fphi^{1/2}v}
+  = \ip{F_\psi\rho(c)u}{v}
+  = \ip{F_\psi u}{\rho(c^\adjoint)v}
+  = \ip{\pi(c)T\Fphi^{1/2}u}{\Fphi^{1/2}v},
+\]
+so \(T \in \pi(\alg)'\). This is Naimark's equation~(3). Next,
+\[
+  \psi_T(a) = V^\adjoint\Fphi^{1/2}\rho(a)T\Fphi^{1/2}V
+  = V^\adjoint\rho(a)\br{\Fphi^{1/2}T\Fphi^{1/2}}V,
+  \qquad \Fphi^{1/2}T\Fphi^{1/2} \in \comm .
+\]
+So
+\(F_{\psi_T} = \Fphi^{1/2}T\Fphi^{1/2} = F_\psi\) by \cref{thm:linear}\ref{it:bij},
+hence \(\psi_T = \psi\). For uniqueness: \(\Fphi^{1/2}T\Fphi^{1/2} = 0\) forces
+\(T = 0\), because \(\ran\Fphi^{1/2}\) is dense in \(\dil\).
+
+(c) The formula \(F_{\psi_T} = \Fphi^{1/2}T\Fphi^{1/2}\) holds for every
+\(T \in \pi(\alg)'\), so \(T \mapsto \psi_T\) is linear and injective. If
+\(T \ge 0\) then \(\psi_T(a) = (T^{1/2}W)^\adjoint\pi(a)(T^{1/2}W)\) is CP and
+\(\psi_T \le \norm T\varphi\). Every element of the C\(^*\)-algebra
+\(\pi(\alg)'\) is a combination of four positive ones, so the image is
+\(\mathcal{D}_\varphi\) by~(b). Finally,
+\(\psi_T^\sharp(a) = (W^\adjoint\pi(a^\adjoint)TW)^\adjoint = W^\adjoint T^\adjoint\pi(a)W
+= \psi_{T^\adjoint}(a)\). If \(\psi_T\) is CP, then
+\(F_{\psi_T} = \Fphi^{1/2}T\Fphi^{1/2} \ge 0\), and so \(T \ge 0\) by density of
+\(\ran\Fphi^{1/2}\).
+\end{proof}
+
+\begin{remark}[The expectation onto the scalars as the universal dominant]
+\label{rem:universal}
+Let \(\Esc(a) \eqdef \tau(a)\id_{\hilb}\) be the \(\tau\)-preserving expectation
+onto the scalars, viewed as a map into \(\bdd{\hilb}\). For \(\alg = \Mn{n}\) and
+\(\hilb = \complex^n\) it is the completely depolarizing channel, written
+\(\Omega\) in~\cite{Watrous2018}. We have \(F_{\Esc} = \id\), so its dilation is
+\((\rho, V, \Ltn)\) and \(\pi(\alg)' = \comm\). Every CP \(\varphi\) satisfies
+\(\varphi \le \norm\Fphi\,\Esc\) by \cref{thm:rn}\ref{it:rn-order}, so
+\(\mathcal{D}_{\Esc}\) is the space of all linear maps. For \(\Esc\),
+\cref{thm:rn}\ref{it:rn-alg} is exactly \cref{thm:linear}\ref{it:bij}. So
+\cref{sec:F} is Naimark's \S19.2 for the reference map \(\Esc\), which plays the
+role of \(f\) and corresponds to the identity operator. For general
+\(\varphi\), \cref{thm:rn} is Arveson's Radon--Nikodym
+theorem~\cite[Section~1.4]{Arveson1969}, here proved without assuming a
+Stinespring dilation. \todo{Check the theorem numbers in Arveson's Section~1.4.}
+\end{remark}
+
+\subsection{Pure maps (Naimark \S19.3)}
+\label{sec:pure}
+
+A nonzero CP map \(\varphi\) is \emph{pure} if every CP \(\psi \le \varphi\) is a
+scalar multiple of \(\varphi\), that is, if \(\varphi\) spans an extreme ray of the
+cone of CP maps. In the matrix case we use the following dictionary between the
+Choi matrix and Kraus operators.
+
+\begin{lemma}[Kraus dictionary]
+\label{lem:kraus}
+Let \(\alg = \Mn n\). For bounded \(V_1, V_2 : \hilb \to \complex^n\), put
+\(v_i \eqdef \sum_j e_j \tensor V_i^\adjoint e_j \in \complex^n \tensor \hilb\).
+Then the Choi matrix of \(a \mapsto V_1^\adjoint a V_2\) is \(\rankone{v_1}{v_2}\).
+Every \(v \in \complex^n \tensor \hilb\) arises this way from a unique \(V\),
+and \(V_1, \dots, V_\kappa\) are linearly independent if and only if
+\(v_1, \dots, v_\kappa\) are. In particular, if \(\Choi \ge 0\) has finite rank
+\(\kappa\), its spectral decomposition \(\Choi = \sum_{i=1}^\kappa \rankone{v_i}{v_i}\)
+gives a Kraus decomposition \(\varphi(a) = \sum_{i=1}^\kappa V_i^\adjoint a V_i\) with
+\(V_1, \dots, V_\kappa\) linearly independent, and \(\ran\Choi = \Span\set{v_i}\).
+\end{lemma}
+\begin{proof}
+We have \(V_1^\adjoint E_{jl}V_2 = \rankone{V_1^\adjoint e_j}{V_2^\adjoint e_l}\), so
+\(\sum_{j,l} E_{jl} \tensor V_1^\adjoint E_{jl}V_2 = \rankone{v_1}{v_2}\). The map
+\(V \mapsto v\) is a linear bijection \(\bdd{\hilb, \complex^n} \to
+\complex^n \tensor \hilb\), with inverse \(V^\adjoint e_j = (e_j^\adjoint \tensor \id)v\).
+\end{proof}
+
+\begin{theorem}[Pure maps]
+\label{thm:pure}
+For a nonzero CP map \(\varphi\) on \(\alg = \bigoplus_k \Mn{n_k}\), the following
+are equivalent:
+\begin{enumerate}[label=(\roman*)]
+  \item \(\varphi\) is pure;
+  \item \(\pi\) is irreducible;
+  \item the support projection of \(\Fphi\) is a minimal projection of \(\comm\);
+  \item \(\varphi_k \ne 0\) for exactly one \(k\), and \(\operatorname{rank}C_{\varphi_k} = 1\);
+  \item \(\varphi(a) = V^\adjoint a_k V\) for some \(k\) and some nonzero bounded
+    \(V : \hilb \to \complex^{n_k}\).
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+(i)\(\Leftrightarrow\)(ii) follows Naimark's Theorem~2. By
+\cref{thm:rn}\ref{it:rn-alg}, CP maps \(\psi \le \lambda\varphi\) correspond to
+positive \(T \in \pi(\alg)'\), with \(\varphi \leftrightarrow \id\). So \(\varphi\) is
+pure if and only if every positive element of \(\pi(\alg)'\) is a scalar, if and
+only if \(\pi(\alg)' = \complex\id\), which is irreducibility by Schur's lemma.
+(ii)\(\Leftrightarrow\)(iii): \(\pi(\alg)' = P\comm P\), and this is \(\complex P\)
+if and only if \(P\) is minimal in \(\comm\).
+(iii)\(\Leftrightarrow\)(iv): by \cref{thm:choi} and the block decomposition of
+\cref{sec:cp},
+\(\comm \cong \bigoplus_k \id_{n_k} \tensor \bdd{\complex^{n_k} \tensor \hilb}\) and
+\(P \cong \bigoplus_k \id_{n_k} \tensor \operatorname{supp}C_{\varphi_k}\). The minimal
+projections of this algebra are \(\id_{n_k} \tensor Q\) with \(Q\) of rank one in a
+single summand. (iv)\(\Leftrightarrow\)(v) is \cref{lem:kraus}.
+\end{proof}
+
+\begin{remark}
+This recovers the known characterization: a CP map on \(\Mn n\) spans an extreme ray
+exactly when it has Choi rank (Kraus rank) one, and in general exactly when its
+minimal Stinespring representation is irreducible~\cite{Arveson1969}. In the
+present approach the equivalence with the Choi rank is a statement about minimal
+projections of \(\comm = \bdd\hilb \tensor \alg\op\).
+\end{remark}
+
+\subsection{Extreme points of normalized maps (Naimark \S19.4)}
+\label{sec:extreme}
+
+Naimark normalizes positive functionals by \(f(e) = 1\) and studies the extreme
+points of the resulting compact convex set. For CP maps there are two natural
+normalizations:
+\begin{itemize}
+  \item \emph{Unital (UCP)}: \(\varphi(1) = \id_{\hilb}\). By
+    \cref{thm:linear}\ref{it:comm}, this is the linear condition
+    \(V^\adjoint\Fphi V = \id_{\hilb}\).
+  \item \emph{Trace preserving (CPTP)}: for \(\hilb = \complex^d\) and a fixed faithful
+    positive functional \(\omega\) on \(\alg\), \(\trace\compose\varphi = \omega\). The
+    usual choice is \(\omega = \trace_\alg \eqdef \sum_k \trace \compose p_k\).
+\end{itemize}
+
+\begin{lemma}
+\label{lem:slice}
+For \(G = \sum_j S_j \tensor R_{b_j} \in \comm\), the map
+\(\varphi_G(a) = V^\adjoint\rho(a)GV\) of \cref{thm:linear} is
+\(\varphi_G(a) = \sum_j \tau(ab_j)\,S_j\). If \(\hilb = \complex^d\), then
+\(\trace\varphi_G(a) = \tau(a\,d_G)\), where
+\(R_{d_G} = (\trace \tensor \id)(G)\). Hence \(\varphi\) is CPTP with respect to
+\(\omega = \tau(\cdot\,d_\omega)\) if and only if
+\((\trace \tensor \id)(\Fphi) = R_{d_\omega}\).
+\end{lemma}
+\begin{proof}
+\(V^\adjoint(\id \tensor \lambda(a)R_b)V = \ip{\vect{ab}}{\Omega}\id = \tau(ab)\id\).
+Take traces and use linearity of \(b \mapsto R_b\).
+\end{proof}
+
+For \(\alg = \Mn n\) and \(\omega = \trace = n\tau\), this says
+\((\trace \tensor \id)\Fphi = n\id\), which is the familiar condition that the partial
+trace of the Choi matrix over the output is \(\id_n\).
+
+\begin{theorem}[Extreme points]
+\label{thm:extreme}
+Let \(\Lambda\) be a linear map from maps \(\alg \to \bdd\hilb\) to a space with
+involution, with \(\Lambda(\psi^\sharp) = \Lambda(\psi)^\adjoint\), and let
+\(\mathcal{S} = \set{\varphi \text{ CP} : \Lambda(\varphi) = \beta}\). A map
+\(\varphi \in \mathcal{S}\) is an extreme point of \(\mathcal{S}\) if and only if
+\[
+  \pi(\alg)' \ni T \longmapsto \Lambda(\psi_T)
+\]
+is injective. In particular:
+\begin{enumerate}[label=(\alph*)]
+  \item \label{it:ext-ucp}
+    (UCP, \(\Lambda(\psi) = \psi(1)\).) \(\varphi\) is extreme in
+    \(\mathrm{UCP}(\alg, \bdd\hilb)\) if and only if \(T \mapsto W^\adjoint TW\) is
+    injective on \(\pi(\alg)'\).
+  \item \label{it:ext-tp}
+    (CPTP, \(\Lambda(\psi) = \trace\compose\psi\).) \(\varphi\) is extreme among
+    CPTP maps if and only if the map
+    \[
+      \pi(\alg)' \ni T \longmapsto (\trace \tensor \id)\br{\Fphi^{1/2}T\Fphi^{1/2}}
+    \]
+    is injective.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Since \(\Lambda(\psi_{T^\adjoint}) = \Lambda(\psi_T)^\adjoint\), injectivity on
+\(\pi(\alg)'\) is equivalent to injectivity on its self-adjoint part.
+
+Suppose the map is injective and \(\varphi = \frac12(\varphi_1 + \varphi_2)\) with
+\(\varphi_i \in \mathcal{S}\). Then \(\varphi_i \le 2\varphi\), so
+\(\varphi_i = \psi_{T_i}\) by \cref{thm:rn}. Now
+\(\Lambda(\psi_{T_1 - \id}) = \beta - \beta = 0\), so \(T_1 = \id\) and
+\(\varphi_1 = \varphi\).
+
+Conversely, suppose \(S = S^\adjoint \ne 0\) in \(\pi(\alg)'\) has
+\(\Lambda(\psi_S) = 0\), scaled so that \(\norm S \le 1\). Then
+\(\psi_{\id \pm S}\) are CP by \cref{thm:rn}\ref{it:rn-alg}, lie in \(\mathcal{S}\),
+and average to \(\varphi\). They are distinct because \(T \mapsto \psi_T\) is
+injective. Finally, (a) uses \(\psi_T(1) = W^\adjoint TW\), and (b) uses
+\cref{lem:slice} with \(F_{\psi_T} = \Fphi^{1/2}T\Fphi^{1/2}\).
+\end{proof}
+
+Part~\ref{it:ext-ucp} is Arveson's extreme point
+theorem~\cite[Section~1.4]{Arveson1969}. Translating through \cref{thm:choi} and
+\cref{lem:kraus} gives the Choi--Kraus forms.
+
+\begin{corollary}[Choi--Kraus characterizations]
+\label{cor:extreme-kraus}
+Let \(\alg = \bigoplus_k \Mn{n_k}\), \(\hilb = \complex^d\), and let
+\(\varphi(a) = \sum_k\sum_{i=1}^{\kappa_k} V_{k,i}^\adjoint a_k V_{k,i}\) be a minimal
+Kraus decomposition, with \(\kappa_k = \operatorname{rank}C_{\varphi_k}\).
+\begin{enumerate}[label=(\alph*)]
+  \item \label{it:ck-ucp}
+    \(\varphi\) is extreme in \(\mathrm{UCP}(\alg, \Mn d)\) if and only if
+    \(\set{V_{k,i}^\adjoint V_{k,j}}_{k,i,j}\) is linearly independent in \(\Mn d\).
+    In that case \(\sum_k \kappa_k^2 \le d^2\).
+  \item \label{it:ck-tp}
+    \(\varphi\) is extreme among CPTP maps (\(\omega = \trace_\alg\), that is,
+    \(\sum_i V_{k,i}V_{k,i}^\adjoint = \id_{n_k}\) for every \(k\)) if and only if, for
+    each \(k\), \(\set{V_{k,i}V_{k,j}^\adjoint}_{i,j}\) is linearly independent in
+    \(\Mn{n_k}\). In that case \(\kappa_k \le n_k\) for every \(k\).
+  \item \label{it:ck-choi}
+    (Choi-matrix form, \(\alg = \Mn n\), \(P = \operatorname{supp}\Choi\).) \(\varphi\)
+    is extreme in UCP if and only if \(X \mapsto \sum_j (e_j^\adjoint \tensor \id)
+    X (e_j \tensor \id)\) is injective on \(P(\Mn n \tensor \Mn d)P\). It is extreme
+    among CPTP maps if and only if \(X \mapsto (\id \tensor \trace)(X)\) is injective
+    on \(P(\Mn n \tensor \Mn d)P\).
+\end{enumerate}
+\end{corollary}
+\begin{proof}
+Since \(\dim\hilb < \infty\), \(\Fphi^{1/2}\) is invertible on \(\dil\). So
+\(\set{F_{\psi_T} : T \in \pi(\alg)'} = P_{\Fphi}\comm P_{\Fphi}\), where
+\(P_{\Fphi}\) is the support of \(\Fphi\). By \cref{thm:choi} and the block
+decomposition, this is
+\(\bigoplus_k \id_{n_k} \tensor P_k(\Mn{n_k} \tensor \Mn d)P_k\) with
+\(P_k = \operatorname{supp}C_{\varphi_k} = \Span\set{v_{k,i}}_i\). By
+\cref{lem:kraus}, its elements are the Choi matrices of the maps
+\(\psi_s(a) = \sum_k\sum_{i,j} s^{(k)}_{ij}V_{k,i}^\adjoint a_kV_{k,j}\), with
+\(s = (s^{(k)}) \in \bigoplus_k \Mn{\kappa_k}\), and \(s \mapsto \psi_s\) is
+injective because the \(v_{k,i}\) are independent.
+
+For (a), \(\psi_s(1) = \sum_{k,i,j}s^{(k)}_{ij}V_{k,i}^\adjoint V_{k,j}\) is injective in
+\(s\) exactly when the family is independent, and counting dimensions gives
+\(\sum_k\kappa_k^2 \le d^2\).
+
+For (b), \(\trace\psi_s(a) = \sum_k\trace\big(a_k\sum_{i,j}s^{(k)}_{ij}V_{k,j}V_{k,i}^\adjoint\big)\)
+is block diagonal in \(k\). It is injective exactly when each family is independent,
+and counting gives \(\kappa_k^2 \le n_k^2\).
+
+For (c), \(\psi_X(1)\) and \(\trace\compose\psi_X\) are the stated maps of the Choi
+matrix \(X\).
+\end{proof}
+
+\begin{remark}[Comparison with the literature]
+\label{rem:extreme-lit}
+For \(\alg = \Mn n\), \ref{it:ck-ucp} is Choi's theorem on extreme unital CP
+maps~\cite[Theorem~5]{Choi1975}. Since \(\varphi \mapsto \varphi^\adjoint\)
+(Hilbert--Schmidt adjoint) exchanges CPTP maps \(\Mn n \to \Mn d\) with UCP maps
+\(\Mn d \to \Mn n\), and sends Kraus operators \(V_i^\adjoint\) to \(V_i\),
+\ref{it:ck-tp} is the standard criterion that a channel with Kraus operators
+\(K_i\) is extreme exactly when \(\set{K_i^\adjoint K_j}\) is linearly
+independent~\cite{Watrous2018}. The bounds \(\kappa \le d\) and \(\kappa \le n\) are
+Choi's. The block-diagonal versions for direct sums, and the derivation from the
+single operator \(\Fphi \in \bdd\hilb \tensor \alg\op\), are the parts specific to
+this approach. \todo{Check theorem numbers in Choi~1975, Arveson~1969 and
+Watrous~2018, and search for the direct-sum statements in the literature.}
+\end{remark}
+
+\begin{corollary}[Krein--Milman, Naimark \S19.4]
+\label{cor:krein-milman}
+For \(\hilb = \complex^d\), the sets of UCP and of CPTP maps on \(\alg\) are compact
+and convex. So every such map is a finite convex combination of extreme points,
+whose minimal Kraus decompositions satisfy the bounds of
+\cref{cor:extreme-kraus}.
+\end{corollary}
+\begin{proof}
+Both sets are closed. They are bounded because \(\norm\varphi = \norm{\varphi(1)}\)
+for CP maps, and \(\norm{\varphi(1)} \le \trace\varphi(1) = \omega(1)\) in the
+trace-preserving case. Apply the finite-dimensional Krein--Milman (Carath\'eodory)
+theorem.
+\end{proof}
+
+\todo{Extend to the intersection UCP \(\cap\) CPTP (unital channels), where the
+constraint \(\Lambda\) combines both slices. Is the criterion injectivity of
+\(T \mapsto (W^\adjoint TW, (\trace \tensor \id)(\Fphi^{1/2}T\Fphi^{1/2}))\), and
+does it recover the Landau--Streater conditions? Also treat extreme
+\(k\)-positive maps, and quantum instruments.}
+
+% ===========================================================================
+\section{Further Directions}
+\label{sec:further}
+
+\paragraph{What is gained.}
+\todo{Discuss what is gained: the dilation space is a concrete subspace of a fixed
+space independent of \(\varphi\); positivity of the form is positivity of one
+operator; the commutant structure explains why the Choi matrix appears; compare
+with~\cite{Kasparov1980,Arveson1969,Paulsen2002}.}
+
+\paragraph{Applications.}
+\todo{Candidates to check: Kraus decompositions from a spectral decomposition of
+\(\Fphi\); a Radon--Nikodym theorem for CP maps \(\psi \le \varphi\) in terms of
+\(\pi(\alg)'\), which here is a compression of \(\bdd\hilb \tensor R(\alg\op)\);
+quantum channels and instruments.}
+
+\paragraph{Open questions.}
+\begin{enumerate}[label=(Q\arabic*)]
+  \item \emph{Finite von Neumann algebras.} For \(\alg\) a finite von Neumann
+    algebra with a faithful normal tracial state, \(\Ltwo\) is a genuine
+    completion, and \(\lambda(\alg)' = R(\alg\op)\) is the standard commutation
+    theorem~\cite{AnantharamanPopa}. Is the \(\varphi\)-form still implemented by
+    an operator affiliated with \(\bdd\hilb \bar\tensor \alg\op\)? Under what
+    conditions on \(\varphi\) is it bounded?
+  \item \todo{Non-tracial states (modular theory), or C\(^*\)-algebras without
+    a faithful trace.}
+  \item \todo{Question.}
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

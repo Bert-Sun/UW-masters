@@ -1,0 +1,23 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {paragraph}{Prior work.}{2}{section*.2}%
+\contentsline {paragraph}{Results.}{2}{section*.3}%
+\contentsline {paragraph}{Acknowledgements.}{2}{section*.4}%
+\contentsline {section}{\numberline {2}Preliminaries}{2}{section.2}%
+\contentsline {paragraph}{Conventions.}{2}{section*.5}%
+\contentsline {section}{\numberline {3}The Standard Form of a Finite-Dimensional Algebra}{3}{section.3}%
+\contentsline {paragraph}{Traces.}{3}{section*.6}%
+\contentsline {paragraph}{The space \(L^2\mleft (\mathcal {A}\mright )\).}{3}{section*.7}%
+\contentsline {section}{\numberline {4}The Operator \(F_{\varphi }\)}{4}{section.4}%
+\contentsline {section}{\numberline {5}Completely Positive Maps}{5}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Minimality and cyclicity: the GNS case}{5}{subsection.5.1}%
+\contentsline {paragraph}{Abelian codomains.}{7}{section*.8}%
+\contentsline {section}{\numberline {6}The Choi Matrix}{8}{section.6}%
+\contentsline {section}{\numberline {7}Maps That Are Not Completely Positive}{8}{section.7}%
+\contentsline {section}{\numberline {8}Domination and Extremal Maps}{9}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Domination (Naimark \S 19.1--2)}{9}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Pure maps (Naimark \S 19.3)}{10}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Extreme points of normalized maps (Naimark \S 19.4)}{11}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Further Directions}{13}{section.9}%
+\contentsline {paragraph}{What is gained.}{13}{section*.9}%
+\contentsline {paragraph}{Applications.}{13}{section*.10}%
+\contentsline {paragraph}{Open questions.}{13}{section*.11}%

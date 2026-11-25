@@ -1,0 +1,424 @@
+\documentclass[12pt]{article}
+
+\usepackage{preamble}
+
+% ---------------------------------------------------------------------------
+% Document-specific macros
+% ---------------------------------------------------------------------------
+\newcommand{\anote}[1]{\textcolor{red}{\small\textbf{(Ashwin:} #1\textbf{)}}}
+% \todo{...} prints the note inline and adds a numbered, hyperlinked entry to
+% \listoftodos (written to main.tdo, like the table of contents).
+\makeatletter
+\newcounter{todo}
+\newcommand{\todo}[1]{%
+  \refstepcounter{todo}%
+  \addcontentsline{tdo}{todo}{\protect\numberline{\thetodo}#1}%
+  \textcolor{\mysubcolor}{\small\textbf{[TODO~\thetodo:} #1\textbf{]}}}
+\newcommand{\l@todo}{\@dottedtocline{1}{0em}{2em}}
+\newcommand{\listoftodos}{%
+  \section*{List of TODOs}%
+  \@starttoc{tdo}}
+\makeatother
+
+\newcommand{\alg}{\mathcal{A}}             % finite-dimensional C*-algebra
+\newcommand{\hilbH}{\mathcal{H}}            % Hilbert space
+\newcommand{\hilbK}{\mathcal{K}}             % dilation space
+\newcommand{\hilbN}{\mathcal{N}}             % null space of a semidefinite form
+\newcommand{\bdd}[1]{\mathcal{B}\br{#1}}   % bounded operators
+\newcommand{\Mn}[1][n]{\mathbb{M}_{#1}}    % matrix algebra: \Mn = M_n, \Mn[k] = M_k
+\newcommand{\algtensor}{\odot}             % algebraic tensor product
+\newcommand{\op}{^{\mathrm{op}}}           % opposite algebra
+\newcommand{\ip}[2]{\left\langle #1 , #2 \right\rangle}
+\newcommand{\ipphi}[2]{\left\langle #1 , #2 \right\rangle_{\varphi}}
+\newcommand{\Ltwo}{L^2\br{\alg}}
+\newcommand{\vect}[1]{\widehat{#1}}
+\newcommand{\Ltn}{\hilbH \tensor \Ltwo}
+\newcommand{\Fphi}{F_{\varphi}}
+\newcommand{\Choi}{C_{\varphi}}
+\newcommand{\comm}{\mathcal{C}}            % commutant rho(A)'
+\newcommand{\Esc}{E_{\complex 1}}          % expectation onto the scalars
+\newcommand{\ran}{\operatorname{ran}}
+
+% ---------------------------------------------------------------------------
+\title{\textbf{Stinespring's Theorem via the Choi Matrix:\\
+an \texorpdfstring{\(L^2\)}{L2} Route in Finite Dimensions}%
+%\thanks{Acknowledgements common to all authors.}
+}
+
+\author{
+  Bert Sun \\
+  Institute for Quantum Computing \\
+  University of Waterloo, Waterloo, Ontario, Canada \\
+  \texttt{bert.sun@uwaterloo.ca}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\todo{abstract}
+\end{abstract}
+
+\tableofcontents
+
+% ===========================================================================
+\section{Preliminaries}
+\label{sec:prelim}
+
+% ---------------------------------------------------------------------------
+\subsection{Conventions}
+\label{sec:conventions}
+
+% ---------------------------------------------------------------------------
+\subsubsection{Sesquilinear forms and bra-ket notation}
+\label{sec:conv-braket}
+
+We use two notations for the inner product on a Hilbert space \(\hilbH\), told
+apart by the separator.
+\begin{itemize}
+  \item \emph{Comma (mathematics convention).} \(\ip{x}{y}\) is linear in the
+    first argument and conjugate-linear in the second.
+  \item \emph{Vertical bar (physics convention).} \(\braket{x}{y}\) is
+    conjugate-linear in the first argument and linear in the second.
+\end{itemize}
+The two are related by
+\begin{equation}
+\label{eq:bar-comma}
+  \braket{x}{y} = \ip{y}{x}, \qquad x, y \in \hilbH .
+\end{equation}
+A ket \(\ket{x}\) is the vector \(x\), and a bra \(\bra{y}\) is the functional
+\(x \mapsto \braket{y}{x} = \ip{x}{y}\). Matrix elements read
+\(\bra{y}T\ket{x} = \braket{y}{Tx} = \ip{Tx}{y}\). For \(u, v \in \hilbH\) the
+outer product \(\ketbra{u}{v}\) is the rank-one operator
+\begin{equation}
+\label{eq:ketbra}
+  \ketbra{u}{v}\, w \eqdef \braket{v}{w}\, u = \ip{w}{v}\, u ,
+  \qquad w \in \hilbH ,
+\end{equation}
+so that \(\ketbra{u}{v}^\adjoint = \ketbra{v}{u}\) and
+\(T\ketbra{u}{v}S = \ketbra{Tu}{S^\adjoint v}\) for bounded \(T, S\).
+Sesquilinear forms built from a map \(\varphi\), such as \(\ipphi{\cdot}{\cdot}\),
+follow the comma convention.
+
+% ---------------------------------------------------------------------------
+\subsubsection{Linear maps}
+\label{sec:conv-maps}
+
+Let \(\varphi : \alg \to \bdd{\hilbH}\) be linear. We write
+\(\varphi_n \eqdef \id_{\Mn} \tensor \varphi :
+\Mn(\alg) \to \Mn(\bdd{\hilbH})\), and call \(\varphi\)
+\emph{completely positive} if every \(\varphi_n\) is positive. We set
+\begin{equation}
+\label{eq:sharp}
+  \varphi^\sharp(a) \eqdef \varphi(a^\adjoint)^\adjoint , \qquad a \in \alg .
+\end{equation}
+The map \(\varphi \mapsto \varphi^\sharp\) is a conjugate-linear involution on
+the linear maps \(\alg \to \bdd{\hilbH}\). We call \(\varphi\) \emph{Hermitian}
+if \(\varphi^\sharp = \varphi\), i.e.\ if \(\varphi\) sends self-adjoint elements
+to self-adjoint operators. Every \(\varphi\) splits uniquely as
+\(\varphi = \varphi_1 + i\varphi_2\) with
+\(\varphi_1 = \frac12(\varphi + \varphi^\sharp)\) and
+\(\varphi_2 = \frac1{2i}(\varphi - \varphi^\sharp)\) Hermitian.
+
+\begin{remark}
+The symbol \(\sharp\) is already in use elsewhere, and we keep it deliberately.
+\begin{enumerate}
+  \item \emph{Modular theory.} In Tomita--Takesaki theory \(\xi \mapsto \xi^\sharp\)
+    is the involution of a left Hilbert algebra; for a von Neumann algebra
+    \(M\) with cyclic separating vector \(\Omega\) it is
+    \((x\Omega)^\sharp = x^\adjoint\Omega\), whose closure is the Tomita operator
+    \(S\). Our use extends this one. Take \(\hilbH = \complex\) and a faithful
+    tracial state \(\tau\) on \(\alg\), and write a functional as
+    \(f = \tau(h\,\cdot\,)\). Then
+    \[f^\sharp(a) = \overline{\tau(ha^\adjoint)} 
+    = \tau(ah^\adjoint) = \tau(h^\adjoint a),\]
+    so \(f^\sharp = \tau(h^\adjoint\,\cdot\,)\).
+    On densities, \(\sharp\) is exactly the Tomita involution
+    \(\vect h \mapsto \vect{h^\adjoint}\) of \(L^2(\alg, \tau)\) (here \(S = J\),
+    since \(\tau\) is a trace). In both settings \(\sharp\) is the
+    conjugate-linear involution whose fixed points are the Hermitian objects,
+    and under \(\varphi \mapsto \Fphi\) it becomes the operator adjoint.
+    \todo{cref the theorem \(F_{\varphi^\sharp} = \Fphi^\adjoint\) once ported.}
+  \item \emph{Alternatives.} Some authors write \(\varphi^\adjoint\) for
+    \eqref{eq:sharp}. We avoid it because \(\varphi^\adjoint\) also denotes the
+    Hilbert--Schmidt (Banach-space) adjoint, which we use to pass between
+    unital and trace-preserving maps.
+    \todo{Confirm which references (e.g.\ Paulsen) use \(\varphi^\adjoint\).}
+  \item \emph{Krein spaces.} \(T^\sharp\) often denotes the adjoint of an
+    operator on a Krein space. We never write it that way; the Krein-space
+    adjoint is named in words where it appears.
+\end{enumerate}
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\subsection{The GNS representation}
+\label{sec:gns}
+
+\begin{theorem}[Gelfand--Naimark--Segal~{\cite[\S17, Theorem~2]{Naimark1972}}]
+\label{thm:gns}
+Let \(\alg\) be a unital C\(^*\)-algebra and \(\omega\) a positive linear
+functional on \(\alg\). There are a Hilbert space \(\hilbH_\omega\), a
+\(*\)-representation \(\pi_\omega\) of \(\alg\) on \(\hilbH_\omega\), and a vector
+\(\Omega_\omega \in \hilbH_\omega\), cyclic for \(\pi_\omega(\alg)\), with
+\begin{equation}
+\label{eq:gns}
+  \omega(a) = \ip{\pi_\omega(a)\Omega_\omega}{\Omega_\omega}
+  = \bra{\Omega_\omega}\pi_\omega(a)\ket{\Omega_\omega} ,
+  \qquad a \in \alg .
+\end{equation}
+The triple \((\pi_\omega, \Omega_\omega, \hilbH_\omega)\) is unique up to a
+unitary intertwining the representations and the cyclic vectors.
+\end{theorem}
+
+Naimark writes \(\xi_0\) for the cyclic vector, though we write \(\Omega_\omega\)
+as is common in the operator-algebra and physics literature.
+
+% ---------------------------------------------------------------------------
+\subsection{Stinespring's theorem}
+\label{sec:stinespring}
+
+Stinespring's theorem is the GNS construction for completely positive maps
+into \(\bdd{\hilbH}\), with \(\hilbH\) in place of \(\complex\).
+
+\begin{theorem}[Stinespring~{\cite[Theorem~1]{Stinespring1955}}]\label{thm:stinespring}
+Let \(\alg\) be a unital C\(^*\)-algebra and \(\varphi : \alg \to \bdd{\hilbH}\)
+completely positive. There are a Hilbert space \(\hilbK\), a \(*\)-representation
+\(\pi\) of \(\alg\) on \(\hilbK\), and a bounded \(V : \hilbH \to \hilbK\) with
+\begin{equation}
+\label{eq:stinespring}
+  \varphi(a) = V^\adjoint\pi(a)V , \qquad a \in \alg .
+\end{equation}
+\end{theorem}
+
+The dilation can be taken with \(\pi\) unital, as in the construction below.
+By~\cite[Theorem~4.1]{Paulsen2002}, we have additionally
+\(V^\adjoint V = \varphi(1)\), so
+\(\norm{V}^2 = \norm{V^\adjoint V} = \norm{\varphi(1)}\).
+\todo{Check the theorem number in Paulsen.}
+
+Such a triple \((\pi, V, \hilbK)\) is a \emph{Stinespring dilation} of
+\(\varphi\). It is \emph{minimal} if \(\pi(\alg)V\hilbH\) spans a dense subspace
+of \(\hilbK\). Minimal dilations are unique up to a unitary intertwining the
+representations and the maps \(V\)~\cite{Arveson1969},
+\cite[Chapter~4]{Paulsen2002}; this is not in Stinespring's paper.
+\todo{Locate the precise statement in Paulsen, Chapter~4.}
+
+We give a brief overview of the construction, as we will modify the presentation
+slightly to obtain later results.
+
+\paragraph{The construction.} Stinespring's proof follows GNS with
+\(\hilbH \algtensor \alg\) in place of \(\alg\). Put
+\begin{equation}
+\label{eq:stine-sesqui-form}
+  \ipphi{x \tensor a}{y \tensor b} \eqdef \ip{\varphi(b^\adjoint a)x}{y}
+\end{equation}
+on \(\hilbH \algtensor \alg\), extended sesquilinearly. For
+\(u = \sum_{i=1}^m x_i \tensor a_i\),
+\[
+  \ipphi{u}{u} = \sum_{i,j} \ip{\varphi(a_j^\adjoint a_i)x_i}{x_j}
+  = \ip{\varphi_m\br{[a_j^\adjoint a_i]_{j,i}}\vec x}{\vec x} \ge 0 ,
+\]
+since \(\varphi_m\) is positive
+and the matrix \([a_j^\adjoint a_i]_{j,i}\) is positive in \(\Mn[m](\alg)\):
+\[
+  [a_j^\adjoint a_i]_{j,i} = X^\adjoint X, \qquad
+  X \eqdef [\delta_{j,1} a_i]_{j,i} =
+  \begin{pmatrix} a_1 & \cdots & a_m \\ 0 & \cdots & 0 \\ \vdots & & \vdots \end{pmatrix}.
+\]
+So~\eqref{eq:stine-sesqui-form} is positive semidefinite.
+Note that is the one place complete positivity is used.
+To make this a genuine inner product, let
+\[
+  \hilbN \eqdef \set{v \in \hilbH \algtensor \alg : \ipphi{v}{v} = 0} .
+\]
+Note that \(\hilbN\) is a
+subspace, and \(\ipphi{\cdot}{\cdot}\) descends to an inner product on the
+quotient \((\hilbH \algtensor \alg)/\hilbN\).
+Let \(\hilbK\) be its completion, write \([v]\) for the class of \(v\), and set
+\(\pi(c)[x \tensor a] \eqdef [x \tensor ca]\)
+and \(Vx \eqdef [x \tensor 1]\). Then
+\(\ip{V^\adjoint\pi(a)Vx}{y} = \ipphi{x \tensor a}{y \tensor 1}
+= \ip{\varphi(a)x}{y}\), which is~\eqref{eq:stinespring}, and the dilation is
+minimal by construction.
+
+\begin{remark}
+For \(\hilbH = \complex\) we have \(\complex \algtensor \alg = \alg\),
+\eqref{eq:stine-sesqui-form} becomes \(\ip{a}{b}_\omega = \omega(b^\adjoint a)\),
+\(V \cong \Omega_\omega\),%
+\footnote{A bounded map \(V : \complex \to \hilbK\) is determined by \(V1\), and
+\(V \mapsto V1\) identifies \(\bdd{\complex, \hilbK}\) with \(\hilbK\). So we may
+write \(V = \ket{\Omega_\omega}\) and \(V^\adjoint = \bra{\Omega_\omega}\), and
+then~\eqref{eq:stinespring} is~\eqref{eq:gns}:
+\(V^\adjoint\pi(a)V = \bra{\Omega_\omega}\pi(a)\ket{\Omega_\omega}\).}
+and the construction is the GNS representation of
+\(\omega = \varphi\) (\cref{thm:gns}). Uniqueness of
+minimal dilations specializes to uniqueness of the GNS representation, and
+minimality to cyclicity of \(\Omega_\omega\). 
+% More generally, for a unit
+% vector \(x \in \hilbH\) the cyclic subspace \(\overline{\pi(\alg)Vx}\) carries
+% the GNS representation of \(\ip{\varphi(\cdot)x}{x}\), and a dilation is
+% minimal exactly when these subspaces span a dense subspace of \(\hilbK\).
+\end{remark}
+
+Working in finite dimensions allows us to replace the quotient-and-completion step.
+%  is what this paper replaces.
+Later, \todo{cref the section defining \(\Fphi\)} we fix the space
+\(\hilbH \tensor L^2(\alg, \tau)\) in advance and realize~\eqref{eq:stine-sesqui-form} there
+by a single operator.
+
+% ---------------------------------------------------------------------------
+\subsection{Commutants and opposite algebras}
+\label{sec:commutants}
+
+For a set \(S\) of bounded operators, \(S'\) denotes its commutant. The
+\emph{opposite algebra} \(\alg\op\) is the vector space \(\alg\) with the same
+involution and the reversed product
+\begin{equation}
+\label{eq:op}
+  a\op b\op \eqdef (ba)\op ,
+\end{equation}
+where \(a\op\) denotes \(a\) regarded as an element of \(\alg\op\). Thus
+\(a \mapsto a\op\) is a linear, \(*\)-preserving anti-isomorphism
+\(\alg \to \alg\op\).
+
+% Transpose remark: keep only if used later; otherwise delete.
+\begin{remark}
+For \(\alg = \Mn\) with its standard matrix units, the transpose gives a
+\emph{linear} \(*\)-isomorphism
+\begin{equation}
+\label{eq:transpose-op}
+  \Mn \to \Mn\op , \qquad a \mapsto (a^\transpose)\op .
+\end{equation}
+It is linear and bijective, multiplicative since
+\(((ab)^\transpose)\op = (b^\transpose a^\transpose)\op
+= (a^\transpose)\op (b^\transpose)\op\) by~\eqref{eq:op}, and \(*\)-preserving
+since \((a^\adjoint)^\transpose = \overline{a} = (a^\transpose)^\adjoint\), with
+\(\overline{a}\) the entrywise conjugate. 
+% Applied blockwise it gives a
+% \(*\)-isomorphism \(\alg \cong \alg\op\) for every finite-dimensional
+% \(\alg \cong \bigoplus_k \Mn[n_k]\). Two caveats.
+% \begin{enumerate}
+%   \item It depends on the matrix units. Transposing in the basis
+%     \(\set{ue_i}\), for a unitary \(u\), gives
+%     \(u(u^\adjoint a u)^\transpose u^\adjoint
+%     = \operatorname{Ad}(uu^\transpose)(a^\transpose)\). So the isomorphism is
+%     canonical only up to an inner automorphism, and unchanged exactly when
+%     \(uu^\transpose\) is scalar (e.g.\ \(u\) real orthogonal).
+%   \item Beyond finite dimensions it has no analogue in general. The map
+%     \(a \mapsto (a^\adjoint)\op\) is always a canonical \emph{conjugate-linear}
+%     \(*\)-isomorphism \(\alg \to \alg\op\), but a linear one need not exist:
+%     Connes gave a factor not anti-isomorphic to itself, and Phillips a simple
+%     separable C\(^*\)-algebra not isomorphic to its opposite.
+%     \todo{Add bib entries: Connes, Ann.\ Math.\ 101 (1975); Phillips, Proc.\
+%     AMS 132 (2004).}
+% \end{enumerate}
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\subsection{The standard form of a finite-dimensional algebra}
+\label{sec:standard-form}
+
+From now on \(\alg\) is a finite-dimensional C\(^*\)-algebra. By the structure
+theorem~\cite[Theorem~III.1.1]{Davidson1996}, \cite{Takesaki1979},
+\begin{equation}
+\label{eq:structure}
+  \alg \cong \bigoplus_{k=1}^r \Mn[n_k], \qquad a = (a_1, \dots, a_r).
+\end{equation}
+\todo{Check the theorem number in Davidson and add a precise reference in
+Takesaki, Vol.~I.}
+Let \(\iota_k\) and \(p_k\) be the inclusion of, and projection onto, the
+\(k\)-th summand, and set \(\varphi_k \eqdef \varphi \compose \iota_k\). Then
+\(\varphi = \sum_k \varphi_k \compose p_k\). Since \(\iota_k\) and \(p_k\) are
+\(*\)-homomorphisms, \(\varphi\) is completely positive if and only if every
+\(\varphi_k\) is. Dilations split the same way: if
+\((\pi_k, V_k, \hilbK_k)\) is a minimal Stinespring dilation of \(\varphi_k\),
+then \(\pi \eqdef \bigoplus_k \pi_k \compose p_k\) on
+\(\hilbK \eqdef \bigoplus_k \hilbK_k\), with \(Vx \eqdef (V_kx)_k\), is a
+minimal Stinespring dilation of \(\varphi\). It therefore suffices, for the
+treatment of completely positive maps, to consider \(\alg = \Mn\).
+
+% ---------------------------------------------------------------------------
+\subsection{The space \texorpdfstring{\(\Ltwo\)}{L2(A)}}
+\label{sec:l2-space}
+
+Let \(\alg\) be a finite-dimensional C\(^*\)-algebra, as in
+\cref{sec:standard-form}, with a faithful tracial state \(\tau\).
+Following Anantharaman and Popa~\cite{AnantharamanPopa}, we take
+\(\Ltwo = L^2(\alg, \tau)\) to be the GNS representation of \(\tau\)
+(\cref{thm:gns}). \todo{Add the section number in Anantharaman--Popa where
+\(L^2(M, \tau)\) is defined.} Since \(\tau\) is faithful and \(\dim \alg < \infty\), no
+quotient or completion is needed: \(\Ltwo\) is \(\alg\) itself, written
+\(a \mapsto \vect a\), with inner product
+\begin{equation}
+\label{eq:l2-ip}
+  \ip{\vect a}{\vect b} \eqdef \tau(b^\adjoint a) ,
+\end{equation}
+linear in the first argument as in \cref{sec:conv-braket}, and cyclic vector
+\(\Omega \eqdef \vect 1 = \Omega_\tau\). When we take \(\alg = \Mn\) to be a
+matrix algebra and \(\tau\) to be the trace, the norm
+\(\norm{\vect a}_2 = \tau(a^\adjoint a)^{1/2}\) is the Hilbert--Schmidt norm,
+normalized by \(n^{-1/2}\) since \(\tau = \frac1n\trace\).
+
+\paragraph{The standard representations.}
+For \(a, b \in \alg\), let \(L_a\) and \(R_b\) be left and right multiplication
+on \(\Ltwo\):
+\begin{equation}
+\label{eq:l2-mult}
+  L_a\vect c \eqdef \vect{ac}, \qquad R_b\vect c \eqdef \vect{cb},
+  \qquad c \in \alg .
+\end{equation}
+The \emph{standard representation} is
+\[
+  \lambda : \alg \to \bdd{\Ltwo}, \qquad \lambda(a) \eqdef L_a ,
+\]
+and it is the GNS representation of \(\tau\): \(\lambda = \pi_\tau\) and
+\(\tau(a) = \ip{\lambda(a)\Omega}{\Omega}\). Right multiplication reverses
+products, \(R_bR_c = R_{cb}\), so \(a \mapsto R_a\) is a representation of the
+opposite algebra. The \emph{right standard representation} is
+\[
+  \rho : \alg\op \to \bdd{\Ltwo}, \qquad \rho(a\op) \eqdef R_a ,
+\]
+which is multiplicative by~\eqref{eq:op}:
+\(\rho(b\op)\rho(c\op) = R_{cb} = \rho((cb)\op) = \rho(b\op c\op)\). 
+Additionally, the two commute as
+\(\lambda(a)\rho(b\op) = \rho(b\op)\lambda(a)\) by associativity.
+\(\Ltwo\) is also known as the 
+\emph{trivial} \(\alg\)--\(\alg\)Hilbert bimodule~\cite{AnantharamanPopa},
+as \(a \cdot \xi \cdot b \eqdef \lambda(a)\rho(b\op)\xi\).
+
+\begin{lemma}
+\label{lemma:standard-rep}\leavevmode
+\begin{enumerate}[label=(\roman*)]
+  \item \(\lambda\) is a faithful unital \(*\)-representation of \(\alg\), and
+    \(\lambda(\alg)\Omega = \Ltwo\).
+  \item \(\rho\) is a faithful unital \(*\)-representation of \(\alg\op\), and
+    \(\rho(\alg\op)\Omega = \Ltwo\).
+  \item \(\lambda(\alg)' = \rho(\alg\op)\).
+  \item For any Hilbert space \(\hilbH\),
+    \((\id_{\hilbH} \tensor \lambda(\alg))' = \bdd{\hilbH} \tensor \rho(\alg\op)\),
+    an algebraic tensor product that is already a von Neumann algebra.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+(i)--(iii) are standard; see~\cite{AnantharamanPopa}. \todo{Add the section
+number in Anantharaman--Popa.}
+(iv) This follows from the commutation theorem for tensor products of von
+Neumann algebras, \((M \mathbin{\bar\tensor} N)' = M' \mathbin{\bar\tensor} N'\),
+where \(\bar\tensor\) is the weak closure of the algebraic tensor
+product~\cite[Theorem~IV.5.9]{Takesaki1979}. \todo{Check the theorem number in
+Takesaki.} Take \(M = \complex\id_{\hilbH}\) and \(N = \lambda(\alg)\), so that
+\(M' = \bdd{\hilbH}\) and \(N' = \rho(\alg\op)\) by~(iii). Since \(\alg\) is
+finite-dimensional, \(\bdd{\hilbH} \tensor \rho(\alg\op)\) is already weakly
+closed so no closure is needed.
+\end{proof}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+% Draft only: remove before submission.
+\listoftodos
+
+\end{document}
